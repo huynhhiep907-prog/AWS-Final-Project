@@ -2,20 +2,17 @@
   "Version": "2012-10-17",
   "Statement": [
     {
-      "Sid": "AllowDynamoDBRecipesTableReadOnly",
+      "Sid": "OrderTrackingTableAccess",
       "Effect": "Allow",
       "Action": [
-        "dynamodb:Scan",
-        "dynamodb:Query",
-        "dynamodb:GetItem"
+        "dynamodb:GetItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem"
       ],
-      "Resource": [
-        "arn:aws:dynamodb:ap-southeast-1:*:table/RecipesTable",
-        "arn:aws:dynamodb:ap-southeast-1:*:table/RecipesTable/index/*"
-      ]
+      "Resource": "arn:aws:dynamodb:ap-southeast-1:*:table/OrderTrackingTable"
     },
     {
-      "Sid": "AllowCloudWatchLogsWrite",
+      "Sid": "WriteLambdaLogs",
       "Effect": "Allow",
       "Action": [
         "logs:CreateLogGroup",
