@@ -1,72 +1,42 @@
 [
   {
-    "RecipeID": "R01",
-    "Name": "Trứng Đúc Thịt",
-    "Ingredients": ["trứng", "thịt băm", "hành lá", "nước mắm", "tiêu", "dầu ăn"],
-    "Instructions": "1. Trộn đều trứng với thịt băm, hành lá thái nhỏ, nước mắm và tiêu. 2. Đun chảo với dầu ăn ở lửa vừa. 3. Đổ hỗn hợp vào chảo, đậy nắp và hấp/chiên khoảng 10 phút. 4. Khi mặt trên se lại và vàng đều, tắt bếp. 5. Dùng nóng với cơm trắng.",
-    "ImageURL": "https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=600&q=80"
+    "OrderID": "ORD-2026-1001",
+    "customerName": "Demo Recipient A",
+    "items": [
+      {"name": "Mechanical keyboard", "quantity": 1},
+      {"name": "Mouse pad", "quantity": 1}
+    ],
+    "status": "OUT_FOR_DELIVERY",
+    "carrier": "Demo Express",
+    "trackingNumber": "TRK-DEMO-1001",
+    "estimatedDelivery": "2026-10-24",
+    "createdAt": "2026-10-21T02:15:00+00:00",
+    "updatedAt": "2026-10-22T01:20:00+00:00",
+    "statusHistory": [
+      {"status": "CONFIRMED", "label": "Đã xác nhận", "timestamp": "2026-10-21T02:15:00+00:00", "note": "Demo order created."},
+      {"status": "PACKING", "label": "Đang đóng gói", "timestamp": "2026-10-21T07:30:00+00:00", "note": "Packed at demo warehouse."},
+      {"status": "SHIPPED", "label": "Đã bàn giao vận chuyển", "timestamp": "2026-10-21T10:00:00+00:00", "note": "Handed to demo carrier."},
+      {"status": "OUT_FOR_DELIVERY", "label": "Đang giao hàng", "timestamp": "2026-10-22T01:20:00+00:00", "note": "Out for delivery."}
+    ]
   },
   {
-    "RecipeID": "R02",
-    "Name": "Đậu Sốt Cà Chua",
-    "Ingredients": ["đậu hũ", "cà chua", "hành tím", "tỏi", "nước mắm", "đường", "dầu ăn", "hành lá"],
-    "Instructions": "1. Cắt đậu hũ thành miếng vừa ăn, chiên vàng hai mặt. 2. Phi thơm hành tím và tỏi băm nhỏ. 3. Cho cà chua thái hạt lựu vào xào mềm. 4. Thêm đậu hũ vào, nêm nước mắm và đường cho vừa ăn. 5. Đảo đều, nấu thêm 3 phút. Rắc hành lá lên trên và tắt bếp.",
-    "ImageURL": "https://images.unsplash.com/photo-1511690743698-d9d85f2fbf38?w=600&q=80"
-  },
-  {
-    "RecipeID": "R03",
-    "Name": "Canh Cà Chua Trứng",
-    "Ingredients": ["cà chua", "trứng", "hành lá", "nước mắm", "muối", "nước"],
-    "Instructions": "1. Đun sôi 500ml nước. 2. Cho cà chua thái múi cau vào khi nước sôi. 3. Đánh tan trứng, đổ từ từ vào nồi canh đang sôi, khuấy nhẹ tay. 4. Nêm nước mắm và muối cho vừa ăn. 5. Tắt bếp, rắc hành lá thái nhỏ. Dùng ngay khi còn nóng.",
-    "ImageURL": "https://images.unsplash.com/photo-1547592180-85f173990554?w=600&q=80"
-  },
-  {
-    "RecipeID": "R04",
-    "Name": "Thịt Kho Tàu",
-    "Ingredients": ["thịt ba chỉ", "trứng", "nước dừa", "nước mắm", "đường", "tỏi", "tiêu", "hành tím"],
-    "Instructions": "1. Ướp thịt ba chỉ với nước mắm, đường, tỏi, tiêu khoảng 30 phút. 2. Thắng đường vàng cánh gián trong nồi, cho thịt vào đảo đều. 3. Đổ nước dừa vừa ngập thịt, đun sôi rồi hạ lửa nhỏ. 4. Thêm trứng luộc bóc vỏ vào nồi. 5. Kho liu riu 45–60 phút đến khi nước cạn sền sệt và thịt mềm.",
-    "ImageURL": "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=600&q=80"
-  },
-  {
-    "RecipeID": "R05",
-    "Name": "Rau Muống Xào Tỏi",
-    "Ingredients": ["rau muống", "tỏi", "dầu ăn", "nước mắm", "muối"],
-    "Instructions": "1. Rau muống nhặt sạch, rửa kỹ và để ráo nước. 2. Đun chảo nóng với dầu ăn, phi thơm tỏi băm. 3. Cho rau muống vào xào lửa to, đảo liên tục. 4. Nêm nước mắm và muối cho vừa ăn. 5. Xào đến khi rau chín mềm nhưng vẫn giữ màu xanh. Dùng ngay.",
-    "ImageURL": "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=600&q=80"
-  },
-  {
-    "RecipeID": "R06",
-    "Name": "Bún Bò Huế",
-    "Ingredients": ["bún", "thịt bò", "giò heo", "sả", "mắm ruốc", "ớt", "hành tím", "tỏi"],
-    "Instructions": "1. Hầm giò heo và thịt bò với sả đập dập, hành tím nướng. 2. Pha mắm ruốc với nước sôi, lọc lấy nước trong. 3. Cho nước mắm ruốc vào nồi nước dùng. 4. Nêm ớt, đường, nước mắm cho vừa. 5. Chan nước dùng sôi lên bát bún, thêm thịt bò thái mỏng và giò heo.",
-    "ImageURL": "https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?w=600&q=80"
-  },
-  {
-    "RecipeID": "R07",
-    "Name": "Gà Kho Gừng",
-    "Ingredients": ["thịt gà", "gừng", "nước mắm", "đường", "tỏi", "tiêu", "hành lá"],
-    "Instructions": "1. Chặt gà thành miếng vừa ăn, rửa sạch, để ráo. 2. Ướp gà với nước mắm, đường, tỏi băm, tiêu, gừng thái sợi 30 phút. 3. Xào gà ở lửa lớn đến khi săn mặt. 4. Thêm một chút nước, kho ở lửa vừa cho đến khi nước cạn sền sệt. 5. Nêm lại gia vị, rắc hành lá lên trên.",
-    "ImageURL": "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=600&q=80"
-  },
-  {
-    "RecipeID": "R08",
-    "Name": "Canh Bí Đỏ Tôm Khô",
-    "Ingredients": ["bí đỏ", "tôm khô", "hành lá", "nước mắm", "muối", "nước"],
-    "Instructions": "1. Ngâm tôm khô nước ấm 15 phút cho mềm, vớt ra. 2. Bí đỏ gọt vỏ, thái miếng vừa ăn. 3. Đun sôi nước, cho tôm khô vào hầm 5 phút lấy vị ngọt. 4. Thêm bí đỏ vào nấu đến khi mềm (khoảng 15 phút). 5. Nêm nước mắm, muối và rắc hành lá lên trên.",
-    "ImageURL": "https://images.unsplash.com/photo-1476718406336-bb5a9690ee2a?w=600&q=80"
-  },
-  {
-    "RecipeID": "R09",
-    "Name": "Cá Kho Tộ",
-    "Ingredients": ["cá basa", "nước mắm", "đường", "tiêu", "ớt", "hành tím", "nước dừa"],
-    "Instructions": "1. Cá basa rửa sạch, thái khúc, ướp nước mắm, đường, tiêu, ớt 20 phút. 2. Thắng đường cùng một chút dầu ăn đến vàng cánh gián. 3. Xếp cá vào nồi đất (tộ), đổ nước dừa vừa ngập. 4. Thêm hành tím cắt đôi xung quanh. 5. Kho lửa nhỏ 25–30 phút đến khi nước cạn và cá thấm đều gia vị.",
-    "ImageURL": "https://images.unsplash.com/photo-1559847844-5315695dadae?w=600&q=80"
-  },
-  {
-    "RecipeID": "R10",
-    "Name": "Phở Bò Tái",
-    "Ingredients": ["bánh phở", "thịt bò", "xương bò", "gừng", "hành tây", "hoa hồi", "quế", "nước mắm"],
-    "Instructions": "1. Nướng gừng và hành tây trực tiếp trên lửa đến khi thơm. 2. Hầm xương bò với gừng, hành tây, hoa hồi, quế ít nhất 4 tiếng. 3. Lọc lấy nước dùng trong, nêm nước mắm và muối. 4. Trần bánh phở trong nước sôi, cho vào tô. 5. Xếp thịt bò thái mỏng lên, chan nước dùng sôi bỏng.",
-    "ImageURL": "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=600&q=80"
+    "OrderID": "ORD-2026-1002",
+    "customerName": "Demo Recipient B",
+    "items": [
+      {"name": "Wireless mouse", "quantity": 1}
+    ],
+    "status": "DELIVERED",
+    "carrier": "Demo Express",
+    "trackingNumber": "TRK-DEMO-1002",
+    "estimatedDelivery": "2026-10-21",
+    "createdAt": "2026-10-19T03:05:00+00:00",
+    "updatedAt": "2026-10-21T06:25:00+00:00",
+    "statusHistory": [
+      {"status": "CONFIRMED", "label": "Đã xác nhận", "timestamp": "2026-10-19T03:05:00+00:00", "note": "Demo order created."},
+      {"status": "PACKING", "label": "Đang đóng gói", "timestamp": "2026-10-19T08:40:00+00:00", "note": "Packed at demo warehouse."},
+      {"status": "SHIPPED", "label": "Đã bàn giao vận chuyển", "timestamp": "2026-10-20T01:10:00+00:00", "note": "Handed to demo carrier."},
+      {"status": "OUT_FOR_DELIVERY", "label": "Đang giao hàng", "timestamp": "2026-10-21T01:10:00+00:00", "note": "Out for delivery."},
+      {"status": "DELIVERED", "label": "Đã giao hàng", "timestamp": "2026-10-21T06:25:00+00:00", "note": "Delivered to demo recipient."}
+    ]
   }
 ]
