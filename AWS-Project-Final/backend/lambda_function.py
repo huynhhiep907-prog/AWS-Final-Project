@@ -1,202 +1,365 @@
 """
-AWS Lambda Function — GỢI Ý MÓN ĂN THEO NGUYÊN LIỆU
-Runtime  : Python 3.12
-DynamoDB : RecipesTable
-Handler  : lambda_function.lambda_handler
-"""
+TrackFlow Order Tracking API
+Runtime: Python 3.12
+DynamoDB table: OrderTrackingTable (partition key: OrderID, String)
 
+Routes:
+  GET   /orders/{orderId}         Public, returns tracking-only fields
+  POST  /orders                   Staff/admin JWT required
+  PATCH /orders/{orderId}/status  Staff/admin JWT required
+
+Configure a Cognito JWT authorizer on the write routes in API Gateway.
+"""
 import json
-import boto3
-import os
 import logging
+import os
+import re
+import uuid
+from datetime import datetime, timezone
+
+import boto3
 from botocore.exceptions import ClientError
 
-# ─────────────────────────────────────────────
-#  Logger — ghi ra CloudWatch
-# ─────────────────────────────────────────────
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
-# ─────────────────────────────────────────────
-#  Constants
-# ─────────────────────────────────────────────
-TABLE_NAME        = os.environ.get("DYNAMODB_TABLE", "RecipesTable")
-MAX_INPUT_LENGTH  = 200     # Giới hạn độ dài input chống spam
-MAX_KEYWORDS      = 10      # Tối đa 10 nguyên liệu mỗi lần tìm
+TABLE_NAME = os.environ.get("DYNAMODB_TABLE", "OrderTrackingTable")
+AWS_REGION = os.environ.get("AWS_REGION", "ap-southeast-1")
+ALLOWED_ORIGIN = os.environ.get("ALLOWED_ORIGIN", "*")
+MAX_BODY_LENGTH = 16000
+MAX_ITEMS = 30
 
-# ─────────────────────────────────────────────
-#  CORS headers — bắt buộc cho API Gateway
-# ─────────────────────────────────────────────
-CORS_HEADERS = {
-    "Access-Control-Allow-Origin":  "*",
-    "Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,Authorization,X-Api-Key",
-    "Access-Control-Allow-Methods": "GET,OPTIONS",
-    "Content-Type":                 "application/json"
+dynamodb = boto3.resource("dynamodb", region_name=AWS_REGION)
+table = dynamodb.Table(TABLE_NAME)
+
+STATUS_LABELS = {
+    "CONFIRMED": "Đã xác nhận",
+    "PACKING": "Đang đóng gói",
+    "SHIPPED": "Đã bàn giao vận chuyển",
+    "OUT_FOR_DELIVERY": "Đang giao hàng",
+    "DELIVERED": "Đã giao hàng",
+    "CANCELLED": "Đã hủy",
+    "DELIVERY_FAILED": "Giao hàng chưa thành công",
 }
 
-# ─────────────────────────────────────────────
-#  DynamoDB client (module-level để tái sử dụng)
-# ─────────────────────────────────────────────
-dynamodb = boto3.resource("dynamodb", region_name=os.environ.get("AWS_REGION", "ap-southeast-1"))
-table    = dynamodb.Table(TABLE_NAME)
+ALLOWED_TRANSITIONS = {
+    "CONFIRMED": {"PACKING", "CANCELLED"},
+    "PACKING": {"SHIPPED", "CANCELLED"},
+    "SHIPPED": {"OUT_FOR_DELIVERY", "DELIVERY_FAILED"},
+    "OUT_FOR_DELIVERY": {"DELIVERED", "DELIVERY_FAILED"},
+    "DELIVERY_FAILED": {"OUT_FOR_DELIVERY"},
+    "DELIVERED": set(),
+    "CANCELLED": set(),
+}
+
+CORS_HEADERS = {
+    "Access-Control-Allow-Origin": ALLOWED_ORIGIN,
+    "Access-Control-Allow-Headers": "Content-Type,Authorization",
+    "Access-Control-Allow-Methods": "GET,POST,PATCH,OPTIONS",
+    "Content-Type": "application/json; charset=utf-8",
+    "Cache-Control": "no-store",
+}
 
 
-# ─────────────────────────────────────────────
-#  Helper: chuẩn hoá response
-# ─────────────────────────────────────────────
-def make_response(status_code: int, body: dict) -> dict:
-    """Tạo response chuẩn cho API Gateway."""
+def now_iso():
+    return datetime.now(timezone.utc).replace(microsecond=0).isoformat()
+
+
+def response(status_code, body):
     return {
         "statusCode": status_code,
-        "headers":    CORS_HEADERS,
-        "body":       json.dumps(body, ensure_ascii=False)
+        "headers": CORS_HEADERS,
+        "body": json.dumps(body, ensure_ascii=False, default=str),
     }
 
 
-# ─────────────────────────────────────────────
-#  Helper: validate input
-# ─────────────────────────────────────────────
-def validate_input(raw_input: str) -> tuple[bool, str]:
-    """
-    Kiểm tra đầu vào người dùng.
-    Trả về (is_valid, error_message).
-    """
-    if not raw_input:
-        return False, "Thiếu tham số 'ingredients'."
-
-    raw_input = raw_input.strip()
-
-    if len(raw_input) > MAX_INPUT_LENGTH:
-        return False, (
-            f"Input quá dài ({len(raw_input)} ký tự). "
-            f"Tối đa {MAX_INPUT_LENGTH} ký tự."
-        )
-
-    # Chặn ký tự đặc biệt nguy hiểm (injection phòng ngừa)
-    forbidden = ["<", ">", "{", "}", "$", "`", "\\", ";", "--"]
-    for char in forbidden:
-        if char in raw_input:
-            return False, f"Input chứa ký tự không hợp lệ: '{char}'."
-
-    return True, ""
+def parse_body(event):
+    raw_body = event.get("body")
+    if not raw_body:
+        return {}
+    if isinstance(raw_body, dict):
+        return raw_body
+    if len(raw_body) > MAX_BODY_LENGTH:
+        raise ValueError("Request body is too large.")
+    try:
+        parsed = json.loads(raw_body)
+    except (TypeError, json.JSONDecodeError):
+        raise ValueError("Request body must be valid JSON.")
+    if not isinstance(parsed, dict):
+        raise ValueError("Request body must be a JSON object.")
+    return parsed
 
 
-# ─────────────────────────────────────────────
-#  Core: quét DynamoDB và lọc theo nguyên liệu
-# ─────────────────────────────────────────────
-def scan_and_filter(keywords: list[str]) -> list[dict]:
-    """
-    Quét toàn bộ RecipesTable và lọc các món có chứa
-    ít nhất một trong các nguyên liệu (keywords).
-    """
-    print(f"[SCAN] Bắt đầu quét DynamoDB table: {TABLE_NAME}")
-    print(f"[SCAN] Keywords: {keywords}")
-
-    response = table.scan()
-    items    = response.get("Items", [])
-
-    # DynamoDB phân trang — tiếp tục nếu còn dữ liệu
-    while "LastEvaluatedKey" in response:
-        print("[SCAN] Phân trang — đang tải thêm dữ liệu...")
-        response = table.scan(ExclusiveStartKey=response["LastEvaluatedKey"])
-        items.extend(response.get("Items", []))
-
-    print(f"[SCAN] Tổng số món trong bảng: {len(items)}")
-
-    # Lọc: món khớp ít nhất 1 nguyên liệu
-    matched = []
-    for item in items:
-        db_ingredients = [ing.lower() for ing in item.get("Ingredients", [])]
-        for kw in keywords:
-            if any(kw.lower() in ing for ing in db_ingredients):
-                matched.append(item)
-                break   # Tránh thêm trùng lặp
-
-    print(f"[FILTER] Số món khớp: {len(matched)}")
-    return matched
+def get_claims(event):
+    authorizer = (event.get("requestContext") or {}).get("authorizer") or {}
+    jwt_claims = (authorizer.get("jwt") or {}).get("claims")
+    if isinstance(jwt_claims, dict):
+        return jwt_claims
+    claims = authorizer.get("claims")
+    return claims if isinstance(claims, dict) else {}
 
 
-# ─────────────────────────────────────────────
-#  MAIN HANDLER
-# ─────────────────────────────────────────────
-def lambda_handler(event, context):
-    """
-    Entry point của Lambda.
-    Query params:
-        - ingredients : string, phân cách bằng dấu phẩy (vd: "trứng,cà chua")
-        - random      : "true" → trả về tất cả món (frontend tự shuffle)
-    """
-    print("=" * 60)
-    print(f"[START] Lambda invoked | RequestId: {context.aws_request_id}")
-    print(f"[EVENT] {json.dumps(event, ensure_ascii=False)}")
+def require_staff(event):
+    claims = get_claims(event)
+    if not claims:
+        return False, response(401, {"error": "Authentication required."})
 
-    # ── Xử lý CORS preflight OPTIONS ──
-    http_method = event.get("httpMethod", "GET")
-    if http_method == "OPTIONS":
-        print("[CORS] Xử lý preflight OPTIONS request.")
-        return make_response(200, {"message": "CORS OK"})
+    role = str(claims.get("custom:role") or claims.get("role") or "").lower()
+    groups = claims.get("cognito:groups") or []
+    if isinstance(groups, str):
+        try:
+            groups = json.loads(groups)
+        except json.JSONDecodeError:
+            groups = [groups]
+    if not isinstance(groups, list):
+        groups = []
+
+    allowed = role in {"staff", "admin"} or any(
+        str(group).lower() in {"staff", "admin"} for group in groups
+    )
+    if not allowed:
+        return False, response(403, {"error": "Staff or admin permission required."})
+    return True, None
+
+
+def extract_route(event):
+    request_context = event.get("requestContext") or {}
+    http_context = request_context.get("http") or {}
+    method = str(event.get("httpMethod") or http_context.get("method") or "GET").upper()
+    path = event.get("rawPath") or event.get("path") or "/"
+    path = path.rstrip("/") or "/"
+    path_parameters = event.get("pathParameters") or {}
+    order_id = path_parameters.get("orderId")
+
+    if not order_id:
+        match = re.search(r"(?:^|/)orders/([^/]+)(?:/status)?$", path)
+        if match:
+            order_id = match.group(1)
+
+    if order_id:
+        order_id = str(order_id).strip().upper()
+    return method, path, order_id
+
+
+def tracking_view(item):
+    # Deliberately omit customer name, address, phone, email and product names
+    # from the public endpoint. Use a verified customer/admin flow for those.
+    return {
+        "orderId": item.get("OrderID"),
+        "status": item.get("status"),
+        "statusLabel": STATUS_LABELS.get(item.get("status", ""), "Không xác định"),
+        "createdAt": item.get("createdAt"),
+        "updatedAt": item.get("updatedAt"),
+        "estimatedDelivery": item.get("estimatedDelivery"),
+        "carrier": item.get("carrier"),
+        "trackingNumber": item.get("trackingNumber"),
+        "itemCount": sum(
+            int(entry.get("quantity", 0))
+            for entry in item.get("items", [])
+            if isinstance(entry, dict)
+        ),
+        "history": item.get("statusHistory", []),
+    }
+
+
+def get_order(order_id):
+    if not order_id or len(order_id) > 40:
+        return response(400, {"error": "A valid order ID is required."})
+
+    result = table.get_item(Key={"OrderID": order_id}, ConsistentRead=True)
+    item = result.get("Item")
+    if not item:
+        return response(404, {"error": "Order not found."})
+    return response(200, {"order": tracking_view(item)})
+
+
+def create_order(event):
+    allowed, error_response = require_staff(event)
+    if not allowed:
+        return error_response
 
     try:
-        # ── Lấy query parameters ──
-        query_params = event.get("queryStringParameters") or {}
-        raw_ingredients = query_params.get("ingredients", "").strip()
-        is_random       = query_params.get("random", "false").lower() == "true"
+        payload = parse_body(event)
+    except ValueError as exc:
+        return response(400, {"error": str(exc)})
 
-        print(f"[PARAMS] ingredients='{raw_ingredients}', random={is_random}")
+    customer_name = payload.get("customerName")
+    items = payload.get("items")
+    if not isinstance(customer_name, str) or not customer_name.strip() or len(customer_name.strip()) > 120:
+        return response(400, {"error": "customerName is required and must be at most 120 characters."})
+    if not isinstance(items, list) or not items or len(items) > MAX_ITEMS:
+        return response(400, {"error": "items must contain between 1 and 30 entries."})
 
-        # ── Chế độ ngẫu nhiên: trả về toàn bộ bảng ──
-        if is_random:
-            print("[RANDOM] Chế độ ngẫu nhiên — quét toàn bộ bảng.")
-            response = table.scan()
-            items    = response.get("Items", [])
-            print(f"[RANDOM] Trả về {len(items)} món.")
-            return make_response(200, {
-                "recipes": items,
-                "count":   len(items),
-                "source":  "dynamodb-random"
+    cleaned_items = []
+    for entry in items:
+        if not isinstance(entry, dict):
+            return response(400, {"error": "Each item must be an object with name and quantity."})
+        name = entry.get("name")
+        quantity = entry.get("quantity")
+        if (
+            not isinstance(name, str)
+            or not name.strip()
+            or len(name.strip()) > 120
+            or isinstance(quantity, bool)
+            or not isinstance(quantity, int)
+            or quantity < 1
+            or quantity > 1000
+        ):
+            return response(400, {"error": "Each item needs a name (max 120 chars) and quantity from 1 to 1000."})
+        cleaned_items.append({"name": name.strip(), "quantity": quantity})
+
+    created_at = now_iso()
+    order_id = "ORD-" + uuid.uuid4().hex[:12].upper()
+    estimated_delivery = payload.get("estimatedDelivery")
+    if estimated_delivery is not None and (
+        not isinstance(estimated_delivery, str) or len(estimated_delivery) > 40
+    ):
+        return response(400, {"error": "estimatedDelivery must be a string of at most 40 characters."})
+
+    record = {
+        "OrderID": order_id,
+        "customerName": customer_name.strip(),
+        "items": cleaned_items,
+        "status": "CONFIRMED",
+        "carrier": str(payload.get("carrier") or "Chưa phân công")[:100],
+        "trackingNumber": "",
+        "estimatedDelivery": estimated_delivery or "Chưa cập nhật",
+        "createdAt": created_at,
+        "updatedAt": created_at,
+        "statusHistory": [{
+            "status": "CONFIRMED",
+            "label": STATUS_LABELS["CONFIRMED"],
+            "timestamp": created_at,
+            "note": "Đơn hàng được tạo.",
+        }],
+    }
+
+    try:
+        table.put_item(
+            Item=record,
+            ConditionExpression="attribute_not_exists(OrderID)",
+        )
+    except ClientError:
+        logger.exception("Unable to create order")
+        return response(500, {"error": "Unable to create order."})
+
+    logger.info("Order created: orderId=%s", order_id)
+    return response(201, {
+        "orderId": order_id,
+        "status": record["status"],
+        "statusLabel": STATUS_LABELS[record["status"]],
+        "createdAt": created_at,
+    })
+
+
+def update_order_status(event, order_id):
+    allowed, error_response = require_staff(event)
+    if not allowed:
+        return error_response
+    if not order_id or len(order_id) > 40:
+        return response(400, {"error": "A valid order ID is required."})
+
+    try:
+        payload = parse_body(event)
+    except ValueError as exc:
+        return response(400, {"error": str(exc)})
+
+    new_status = payload.get("status")
+    if not isinstance(new_status, str):
+        return response(400, {"error": "status is required."})
+    new_status = new_status.strip().upper()
+    if new_status not in STATUS_LABELS:
+        return response(400, {"error": "Unsupported status."})
+
+    note = payload.get("note", "")
+    if not isinstance(note, str) or len(note) > 300:
+        return response(400, {"error": "note must be a string of at most 300 characters."})
+
+    try:
+        result = table.get_item(Key={"OrderID": order_id}, ConsistentRead=True)
+        item = result.get("Item")
+        if not item:
+            return response(404, {"error": "Order not found."})
+
+        current_status = item.get("status")
+        if new_status not in ALLOWED_TRANSITIONS.get(current_status, set()):
+            return response(409, {
+                "error": "Invalid status transition.",
+                "currentStatus": current_status,
+                "requestedStatus": new_status,
             })
 
-        # ── Validate input ──
-        is_valid, error_msg = validate_input(raw_ingredients)
-        if not is_valid:
-            print(f"[VALIDATE] Lỗi validation: {error_msg}")
-            return make_response(400, {"error": error_msg})
+        timestamp = now_iso()
+        event_record = {
+            "status": new_status,
+            "label": STATUS_LABELS[new_status],
+            "timestamp": timestamp,
+            "note": note.strip() or STATUS_LABELS[new_status],
+        }
+        update_values = {
+            ":current_status": current_status,
+            ":new_status": new_status,
+            ":updated_at": timestamp,
+            ":empty_list": [],
+            ":history_event": [event_record],
+        }
+        update_expression = (
+            "SET #status = :new_status, updatedAt = :updated_at, "
+            "statusHistory = list_append(if_not_exists(statusHistory, :empty_list), :history_event)"
+        )
+        if new_status == "SHIPPED" and payload.get("trackingNumber"):
+            tracking_number = payload.get("trackingNumber")
+            if not isinstance(tracking_number, str) or len(tracking_number) > 100:
+                return response(400, {"error": "trackingNumber must be at most 100 characters."})
+            update_expression += ", trackingNumber = :tracking_number"
+            update_values[":tracking_number"] = tracking_number.strip()
 
-        # ── Parse keywords ──
-        keywords = [kw.strip() for kw in raw_ingredients.split(",") if kw.strip()]
-        keywords = keywords[:MAX_KEYWORDS]   # Giới hạn số lượng từ khoá
-        print(f"[KEYWORDS] Parsed: {keywords}")
+        updated = table.update_item(
+            Key={"OrderID": order_id},
+            UpdateExpression=update_expression,
+            ConditionExpression="#status = :current_status",
+            ExpressionAttributeNames={"#status": "status"},
+            ExpressionAttributeValues=update_values,
+            ReturnValues="ALL_NEW",
+        )["Attributes"]
+    except ClientError as exc:
+        if exc.response.get("Error", {}).get("Code") == "ConditionalCheckFailedException":
+            return response(409, {"error": "Order status changed concurrently. Refresh and retry."})
+        logger.exception("Unable to update order status")
+        return response(500, {"error": "Unable to update order status."})
 
-        if not keywords:
-            return make_response(400, {"error": "Không có nguyên liệu hợp lệ sau khi xử lý."})
+    logger.info(
+        "Order status updated: orderId=%s from=%s to=%s",
+        order_id, current_status, new_status,
+    )
+    return response(200, {
+        "orderId": order_id,
+        "status": updated.get("status"),
+        "statusLabel": STATUS_LABELS.get(updated.get("status", "")),
+        "updatedAt": updated.get("updatedAt"),
+    })
 
-        # ── Quét và lọc DynamoDB ──
-        matched_recipes = scan_and_filter(keywords)
 
-        # ── Thành công ──
-        print(f"[SUCCESS] Trả về {len(matched_recipes)} món ăn.")
-        print("=" * 60)
-        return make_response(200, {
-            "recipes":  matched_recipes,
-            "count":    len(matched_recipes),
-            "keywords": keywords,
-            "source":   "dynamodb"
-        })
+def lambda_handler(event, context):
+    request_context = event.get("requestContext") or {}
+    request_id = getattr(context, "aws_request_id", "local-test")
+    method, path, order_id = extract_route(event)
+    logger.info("Request received: requestId=%s method=%s path=%s", request_id, method, path)
 
-    except ClientError as e:
-        error_code = e.response["Error"]["Code"]
-        error_msg  = e.response["Error"]["Message"]
-        print(f"[DYNAMODB ERROR] Code: {error_code} | Message: {error_msg}")
-        logger.error(f"DynamoDB ClientError: {error_code} - {error_msg}", exc_info=True)
-        return make_response(500, {
-            "error":   "Lỗi kết nối DynamoDB.",
-            "details": error_msg
-        })
+    if method == "OPTIONS":
+        return response(200, {"message": "CORS preflight successful."})
 
-    except Exception as e:
-        print(f"[UNHANDLED ERROR] {type(e).__name__}: {str(e)}")
-        logger.error("Unhandled exception", exc_info=True)
-        return make_response(500, {
-            "error":   "Lỗi nội bộ máy chủ.",
-            "details": str(e)
-        })
+    try:
+        if method == "GET" and order_id and not path.endswith("/status"):
+            return get_order(order_id)
+        if method == "POST" and re.search(r"(?:^|/)orders$", path):
+            return create_order(event)
+        if method == "PATCH" and order_id and path.endswith("/status"):
+            return update_order_status(event, order_id)
+        return response(404, {"error": "Route not found."})
+    except ClientError:
+        logger.exception("AWS service error: requestId=%s", request_id)
+        return response(500, {"error": "A backend service error occurred."})
+    except Exception:
+        logger.exception("Unhandled error: requestId=%s", request_id)
+        return response(500, {"error": "An internal server error occurred."})
