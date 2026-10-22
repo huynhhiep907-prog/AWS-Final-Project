@@ -1,179 +1,189 @@
-# 🍽️ Website Gợi Ý Món Ăn Theo Nguyên Liệu
-**AWS Serverless Lab** · DynamoDB · Lambda · API Gateway · S3
+# TrackFlow — AWS Order Tracking System
 
----
+**FCAJ Workshop prototype | Bản mẫu workshop**  
+Services planned: Amazon S3, Amazon API Gateway, AWS Lambda, Amazon DynamoDB, Amazon Cognito, Amazon CloudWatch.
 
-## 👥 Phân Công Nhiệm Vụ
+> **Important:** The website demo data is not connected to AWS yet. This repository contains the application code and deployment guide; resources must still be created and configured in your AWS account.
 
-| Thành Viên | Phụ Trách Thư Mục | Nhiệm Vụ Chi Tiết |
-|---|---|---|
-| **Thành viên 1** | `frontend/` | Thiết kế UI, viết HTML/CSS/JS, tích hợp API URL, upload lên S3 |
-| **Thành viên 2** | `backend/` | Tạo bảng DynamoDB, import dữ liệu, viết và deploy Lambda function |
-| **Thành viên 3** | `security-and-docs/` | Cấu hình IAM Policy, tạo API Gateway, kiểm tra CORS, viết tài liệu |
+## 1. What it does | Chức năng
 
----
+- Public order tracking by order ID. The public endpoint returns delivery status and timeline only; it intentionally does not return customer name, address, phone, email, or product names.
+- Staff/admin create orders and update their status.
+- Every status change is appended to an audit timeline.
+- Invalid status transitions are rejected.
+- Lambda logs request IDs and status changes to CloudWatch without logging request bodies or customer details.
 
-## 🏗️ Kiến Trúc Hệ Thống
+Supported status flow:
 
+`CONFIRMED → PACKING → SHIPPED → OUT_FOR_DELIVERY → DELIVERED`
+
+Cancellation is allowed before shipping. Failed delivery can transition back to `OUT_FOR_DELIVERY`.
+
+## 2. Architecture | Kiến trúc
+
+```text
+Customer browser
+    │ HTTPS
+    ▼
+Amazon S3 (static frontend; CloudFront can be added)
+    │ HTTPS request
+    ▼
+Amazon API Gateway (HTTP API)
+    ├── GET /orders/{orderId}                  Public tracking summary
+    ├── POST /orders                           Cognito JWT + staff/admin
+    └── PATCH /orders/{orderId}/status         Cognito JWT + staff/admin
+                    │
+                    ▼
+             AWS Lambda (Python 3.12)
+                    │ GetItem / PutItem / UpdateItem
+                    ▼
+             DynamoDB: OrderTrackingTable
+
+Lambda logs ──► Amazon CloudWatch Logs
+API Gateway write routes ──► Amazon Cognito JWT authorizer
 ```
-Người dùng
-    │
-    ▼
-[S3 Static Website]  ←── frontend/index.html
-    │
-    │  HTTP GET /search?ingredients=trứng,cà chua
-    ▼
-[API Gateway]  ←── REST API (HTTP API)
-    │
-    │  Trigger
-    ▼
-[AWS Lambda]  ←── backend/lambda_function.py (Python 3.12)
-    │
-    │  boto3.scan()
-    ▼
-[DynamoDB: RecipesTable]  ←── dữ liệu từ backend/seed_data.json
+
+## 3. DynamoDB table | Tạo bảng
+
+Create a table in **ap-southeast-1 (Singapore)**:
+
+- Table name: `OrderTrackingTable`
+- Partition key: `OrderID` (String)
+- Billing mode: **On-demand** for a low-traffic workshop demo
+- No sort key is required for this first version.
+
+Import the two records in `backend/seed_data.json` using the DynamoDB console's item editor, or run a small boto3 seed script from an authenticated environment. The records contain synthetic demo data only.
+
+## 4. Lambda setup | Cấu hình Lambda
+
+1. Create a Lambda function named `OrderTrackingFunction`, runtime **Python 3.12**.
+2. Set the handler to `lambda_function.lambda_handler`.
+3. Upload `backend/lambda_function.py` as the function code.
+4. Attach the policy in `security-and-docs/iam_policy.json` to the Lambda execution role. The policy is limited to the `OrderTrackingTable` table and CloudWatch Logs.
+5. Set environment variables:
+   - `DYNAMODB_TABLE = OrderTrackingTable`
+   - `AWS_REGION = ap-southeast-1`
+   - `ALLOWED_ORIGIN = *` for initial testing only. Before deployment, replace `*` with the exact website origin.
+6. Configure a reasonable timeout (for example, 10 seconds) and memory (for example, 256 MB) for the demo, then review actual usage in CloudWatch.
+
+Boto3 is included in the standard Lambda Python runtime. Do not paste AWS access keys into the code.
+
+## 5. API Gateway routes | API
+
+Create an **HTTP API** with Lambda integration to `OrderTrackingFunction`.
+
+| Method | Route | Access | Purpose |
+|---|---|---|---|
+| GET | `/orders/{orderId}` | Public, tracking-only response | Look up delivery status |
+| POST | `/orders` | Cognito JWT authorizer; staff/admin role required | Create an order |
+| PATCH | `/orders/{orderId}/status` | Cognito JWT authorizer; staff/admin role required | Change status |
+| OPTIONS | CORS preflight | Public | Browser CORS |
+
+Configure CORS to allow the website origin, methods `GET, POST, PATCH, OPTIONS`, and headers `Content-Type, Authorization`. Do not use a wildcard origin in the final deployment.
+
+### Cognito authorization for write routes
+
+1. Create an Amazon Cognito User Pool and an app client suitable for a browser-based application.
+2. Create a Cognito group named `staff` (and optionally `admin`); add the workshop staff user to that group.
+3. Create a JWT authorizer in API Gateway using the User Pool issuer URL and app client audience.
+4. Attach the authorizer to **POST /orders** and **PATCH /orders/{orderId}/status** only.
+5. Keep `GET /orders/{orderId}` public because it returns tracking-only fields. If you later return personal data, add customer verification/authentication first.
+
+The Lambda also checks the `cognito:groups`, `role`, or `custom:role` claims before allowing writes. Never rely on hiding the staff buttons in the frontend as an access-control mechanism.
+
+## 6. Request examples | Ví dụ API
+
+Public tracking:
+
+```http
+GET /orders/ORD-2026-1001
 ```
 
----
+Create order (send a valid Cognito JWT as `Authorization: Bearer <token>`):
 
-## 🚀 Hướng Dẫn Triển Khai
+```http
+POST /orders
+Content-Type: application/json
+Authorization: Bearer <Cognito-JWT>
 
-### Bước 1 — Tạo Bảng DynamoDB (Thành viên 2)
-
-1. Vào **AWS Console → DynamoDB → Create table**
-2. Cấu hình bảng:
-   - **Table name:** `RecipesTable`
-   - **Partition key:** `RecipeID` (String)
-3. Sau khi bảng tạo xong, vào tab **Items → Create item**
-4. Import lần lượt 10 món từ file `backend/seed_data.json`
-   - **Hoặc** dùng AWS CLI để import hàng loạt:
-     ```bash
-     # Tạo script import (chạy từng item)
-     aws dynamodb put-item \
-       --table-name RecipesTable \
-       --item file://item.json \
-       --region ap-southeast-1
-     ```
-
----
-
-### Bước 2 — Tạo IAM Role cho Lambda (Thành viên 3)
-
-1. Vào **IAM → Roles → Create role**
-2. **Trusted entity:** Lambda
-3. Gắn policy từ file `security-and-docs/iam_policy.json`:
-   - Vào **IAM → Policies → Create policy → JSON tab**
-   - Paste nội dung file vào và đặt tên: `RecipesLambdaPolicy`
-4. Gắn policy vừa tạo vào Role → đặt tên Role: `RecipesLambdaRole`
-
----
-
-### Bước 3 — Tạo Lambda Function (Thành viên 2)
-
-1. Vào **Lambda → Create function**
-2. Cấu hình:
-   - **Function name:** `RecipeSearchFunction`
-   - **Runtime:** Python 3.12
-   - **Execution role:** `RecipesLambdaRole` (đã tạo ở Bước 2)
-3. Paste toàn bộ nội dung file `backend/lambda_function.py` vào code editor
-4. Bấm **Deploy**
-5. (Tùy chọn) Thêm **Environment Variables:**
-   - `DYNAMODB_TABLE` = `RecipesTable`
-
----
-
-### Bước 4 — Tạo API Gateway (Thành viên 3)
-
-1. Vào **API Gateway → Create API → HTTP API**
-2. Thêm Integration:
-   - **Integration type:** Lambda
-   - **Lambda function:** `RecipeSearchFunction`
-3. Thêm Route:
-   - `GET /search` → Integration vừa tạo
-   - `OPTIONS /search` → Integration vừa tạo (cho CORS)
-4. Cấu hình **CORS:**
-   - **Allow origins:** `*`
-   - **Allow methods:** `GET, OPTIONS`
-   - **Allow headers:** `Content-Type`
-5. **Deploy** → chọn stage `prod`
-6. Sao chép **Invoke URL** (ví dụ: `https://abc123.execute-api.ap-southeast-1.amazonaws.com/prod`)
-
----
-
-### Bước 5 — Cập Nhật Frontend và Upload lên S3 (Thành viên 1)
-
-1. Mở file `frontend/index.html`
-2. Tìm dòng:
-   ```javascript
-   const API_URL = "";
-   ```
-3. Điền Invoke URL từ Bước 4:
-   ```javascript
-   const API_URL = "https://abc123.execute-api.ap-southeast-1.amazonaws.com/prod/search";
-   ```
-4. Vào **S3 → Create bucket:**
-   - **Bucket name:** `recipe-suggestion-website` *(phải là tên duy nhất toàn cầu)*
-   - **Region:** `ap-southeast-1`
-5. Tắt **Block all public access** → xác nhận
-6. Vào tab **Properties → Static website hosting → Enable**
-   - **Index document:** `index.html`
-7. Vào tab **Permissions → Bucket policy** → Paste policy sau:
-   ```json
-   {
-     "Version": "2012-10-17",
-     "Statement": [
-       {
-         "Sid": "PublicReadGetObject",
-         "Effect": "Allow",
-         "Principal": "*",
-         "Action": "s3:GetObject",
-         "Resource": "arn:aws:s3:::recipe-suggestion-website/*"
-       }
-     ]
-   }
-   ```
-8. Upload file `frontend/index.html` lên bucket
-9. Truy cập **Endpoint URL** của S3 static website để kiểm tra
-
----
-
-## ✅ Kiểm Tra Hoàn Chỉnh
-
-| Hạng mục | Cách kiểm tra | Kết quả mong đợi |
-|---|---|---|
-| DynamoDB | Vào Items → kiểm tra 10 món | Hiển thị đủ 10 bản ghi |
-| Lambda | Test với event `{"queryStringParameters": {"ingredients": "trứng"}}` | Status 200, trả về JSON |
-| API Gateway | Gọi URL trên trình duyệt | JSON trả về có `recipes` |
-| S3 Website | Mở Endpoint URL | Trang web hiển thị, tìm kiếm hoạt động |
-| CORS | Dùng DevTools Network tab | Không có lỗi CORS |
-| CloudWatch | Lambda → Monitor → Logs | Thấy log `[START]`, `[SCAN]`, `[SUCCESS]` |
-
----
-
-## 📁 Cấu Trúc Thư Mục
-
+{
+  "customerName": "Demo Recipient C",
+  "carrier": "Demo Express",
+  "estimatedDelivery": "2026-10-28",
+  "items": [
+    {"name": "USB-C hub", "quantity": 1}
+  ]
+}
 ```
+
+The API generates a random order ID and starts the order at `CONFIRMED`.
+
+Update status (staff/admin JWT required):
+
+```http
+PATCH /orders/ORD-REPLACE-WITH-REAL-ID/status
+Content-Type: application/json
+Authorization: Bearer <Cognito-JWT>
+
+{
+  "status": "PACKING",
+  "note": "Packed at the warehouse."
+}
+```
+
+Allowed status values: `CONFIRMED`, `PACKING`, `SHIPPED`, `OUT_FOR_DELIVERY`, `DELIVERED`, `CANCELLED`, `DELIVERY_FAILED`. When transitioning to `SHIPPED`, you may also include `trackingNumber`.
+
+## 7. Lambda test events | Kiểm thử Lambda
+
+In the Lambda console, use these test events (for a direct Lambda test, public GET does not need a JWT):
+
+GET existing order:
+
+```json
+{
+  "version": "2.0",
+  "routeKey": "GET /orders/{orderId}",
+  "rawPath": "/orders/ORD-2026-1001",
+  "requestContext": {"http": {"method": "GET"}},
+  "pathParameters": {"orderId": "ORD-2026-1001"}
+}
+```
+
+GET missing order should return HTTP 404. A POST/PATCH test without authorizer claims should return HTTP 401, as intended. Test successful write operations through API Gateway after Cognito authorization is configured.
+
+## 8. Security and reliability | Bảo mật và độ tin cậy
+
+- Least privilege: Lambda can only get, create, and update items in the intended table.
+- Write endpoints require Cognito JWT authorization and a staff/admin claim.
+- Public tracking responses omit personal and product details.
+- Input length, quantity, and item-count validation are enforced server-side.
+- Status transitions are validated; conditional writes reject concurrent updates.
+- Logs avoid request bodies and customer details. Review CloudWatch Logs and set a retention period to control cost.
+- Restrict CORS to the production frontend origin before the demo goes live.
+- Do not store payment card data, passwords, access keys, or real sensitive customer data in this workshop prototype.
+
+## 9. CloudWatch and cost | Giám sát và chi phí
+
+Use CloudWatch Logs to inspect `OrderTrackingFunction` execution and errors. For the workshop, create a simple alarm on Lambda `Errors` if appropriate and show the alarm/log evidence in the presentation.
+
+Estimate costs with **AWS Pricing Calculator** for the selected region, expected Lambda invocations, DynamoDB on-demand reads/writes, API Gateway requests, Cognito usage, S3 storage/requests, and CloudWatch log ingestion/storage. Prices and free-tier eligibility can change; use the calculator before presenting a dollar estimate. Remove test resources after the workshop.
+
+## 10. Cleanup | Dọn tài nguyên
+
+After the demo, delete or disable resources that are no longer needed: API Gateway API, Lambda function, DynamoDB table and demo data, Cognito test users/pool (if dedicated to the workshop), S3 bucket/objects, CloudWatch alarms and log groups. Confirm the account has no remaining billable resources.
+
+## Repository layout
+
+```text
 AWS-Project-Final/
-├── frontend/
-│   └── index.html          # Giao diện web (HTML5 + Tailwind + Vanilla JS)
+├── frontend/index.html
 ├── backend/
-│   ├── lambda_function.py  # Code Lambda Python 3.12
-│   └── seed_data.json      # Dữ liệu 10 món ăn để import DynamoDB
+│   ├── lambda_function.py
+│   └── seed_data.json
 └── security-and-docs/
-    ├── iam_policy.json      # IAM Policy (Least Privilege)
-    └── README.md            # File này
+    ├── iam_policy.json
+    └── README.md
 ```
 
 ---
-
-## 🔐 Nguyên Tắc Bảo Mật (Least Privilege)
-
-- Lambda **chỉ** có quyền `Scan`, `Query`, `GetItem` trên **đúng bảng** `RecipesTable`
-- Lambda **chỉ** ghi log vào `/aws/lambda/*` trên CloudWatch
-- S3 bucket **chỉ** cho phép đọc file tĩnh (`s3:GetObject`)
-- API Gateway có CORS headers nhưng giới hạn method (`GET`, `OPTIONS`)
-- Input validation trong Lambda: giới hạn độ dài 200 ký tự, chặn ký tự injection
-
----
-
-*Dự án AWS Serverless Lab — Nhóm thực hiện: Thành viên 1, Thành viên 2, Thành viên 3*
+*TrackFlow is a learning prototype, not a production shipping platform. Carrier events are demo data until a real carrier integration is configured.*
