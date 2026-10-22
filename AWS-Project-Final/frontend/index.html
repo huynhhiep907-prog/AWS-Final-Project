@@ -1,531 +1,279 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Gợi Ý Món Ăn Theo Nguyên Liệu</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Tra cứu trạng thái đơn hàng và lịch sử vận chuyển.">
+  <title>TrackFlow — Theo dõi đơn hàng</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    /* Custom scrollbar */
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: #f1f5f9; }
-    ::-webkit-scrollbar-thumb { background: #f97316; border-radius: 3px; }
-
-    /* Card hover lift */
-    .recipe-card {
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-    .recipe-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 12px 28px rgba(0,0,0,0.12);
-    }
-
-    /* Spinner */
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .spinner {
-      display: inline-block;
-      width: 20px; height: 20px;
-      border: 3px solid #fed7aa;
-      border-top-color: #f97316;
-      border-radius: 50%;
-      animation: spin 0.7s linear infinite;
-    }
-
-    /* Tag pill */
-    .ingredient-tag {
-      display: inline-block;
-      background: #fff7ed;
-      color: #c2410c;
-      border: 1px solid #fed7aa;
-      border-radius: 9999px;
-      padding: 2px 10px;
-      font-size: 0.75rem;
-      margin: 2px;
-    }
-
-    /* Popup overlay */
-    .popup-overlay {
-      display: none;
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,0.55);
-      z-index: 50;
-      justify-content: center;
-      align-items: center;
-      padding: 16px;
-    }
-    .popup-overlay.active { display: flex; }
-
-    /* Fade-in animation for cards */
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(16px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    .fade-in { animation: fadeInUp 0.35s ease both; }
+    :root { color-scheme: light; }
+    body { font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    .step-line { position: absolute; left: 15px; top: 32px; bottom: -18px; width: 2px; background: #e2e8f0; }
+    .step:last-child .step-line { display: none; }
+    .step-dot { position: relative; z-index: 1; }
+    .soft-grid { background-image: radial-gradient(#cbd5e1 0.7px, transparent 0.7px); background-size: 18px 18px; }
   </style>
 </head>
-<body class="min-h-screen bg-gradient-to-br from-orange-50 via-white to-amber-50 font-sans">
-
-  <!-- ===== HEADER ===== -->
-  <header class="bg-gradient-to-r from-orange-500 to-amber-500 shadow-lg">
-    <div class="max-w-5xl mx-auto px-4 py-5 flex flex-col sm:flex-row items-center gap-3">
-      <!-- Logo / Icon -->
-      <div class="flex-shrink-0 bg-white rounded-full p-2 shadow">
-        <svg class="w-9 h-9 text-orange-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round"
-            d="M12 3C8 3 5 6 5 10c0 5 7 11 7 11s7-6 7-11c0-4-3-7-7-7z"/>
-          <circle cx="12" cy="10" r="3" fill="currentColor" stroke="none"/>
-        </svg>
-      </div>
-      <div class="text-center sm:text-left">
-        <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-wide drop-shadow">
-          🍽️ GỢI Ý MÓN ĂN THEO NGUYÊN LIỆU
-        </h1>
-        <p class="text-orange-100 text-sm mt-0.5">
-          Nhập nguyên liệu bạn có — chúng tôi tìm món ngon cho bạn!
-        </p>
-      </div>
-      <!-- AWS Badge -->
-      <div class="sm:ml-auto flex-shrink-0">
-        <span class="bg-white/20 border border-white/40 text-white text-xs font-semibold px-3 py-1 rounded-full">
-          ☁️ Powered by AWS Serverless
+<body class="min-h-screen bg-slate-50 text-slate-900">
+  <header class="border-b border-slate-200 bg-white">
+    <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4 sm:px-6">
+      <a href="#" class="flex items-center gap-3" aria-label="TrackFlow trang chủ">
+        <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 text-white shadow-sm">
+          <svg viewBox="0 0 24 24" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 7.5h11v10H3zM14 11h4l3 3v3h-7z"/>
+            <circle cx="7" cy="18" r="2"/><circle cx="18" cy="18" r="2"/>
+          </svg>
         </span>
-      </div>
+        <span>
+          <span class="block text-lg font-extrabold tracking-tight">TrackFlow</span>
+          <span class="block text-xs text-slate-500">Order tracking · Theo dõi đơn hàng</span>
+        </span>
+      </a>
+      <span class="hidden rounded-full border border-blue-100 bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-700 sm:inline-flex">AWS Serverless Project</span>
     </div>
   </header>
 
-  <!-- ===== SEARCH SECTION ===== -->
-  <main class="max-w-5xl mx-auto px-4 py-8">
-    <section class="bg-white rounded-2xl shadow-md p-6 mb-8 border border-orange-100">
-      <label class="block text-gray-700 font-semibold mb-2 text-sm">
-        🧅 Nhập nguyên liệu (phân cách bằng dấu phẩy):
-      </label>
-      <div class="flex flex-col sm:flex-row gap-3">
-        <input
-          id="ingredient-input"
-          type="text"
-          placeholder="Ví dụ: trứng, thịt băm, cà chua"
-          maxlength="200"
-          class="flex-1 border-2 border-orange-200 rounded-xl px-4 py-3 text-gray-800
-                 focus:outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100
-                 placeholder-gray-400 text-sm transition"
-        />
-        <div class="flex gap-2">
-          <button
-            id="search-btn"
-            onclick="searchRecipes()"
-            class="flex-1 sm:flex-none bg-orange-500 hover:bg-orange-600 active:scale-95
-                   text-white font-bold px-5 py-3 rounded-xl shadow transition-all
-                   flex items-center gap-2 justify-center text-sm"
-          >
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-              <circle cx="11" cy="11" r="8"/><path stroke-linecap="round" d="m21 21-4.35-4.35"/>
-            </svg>
-            Tìm Kiếm Món Ăn
-          </button>
-          <button
-            id="random-btn"
-            onclick="randomRecipes()"
-            class="flex-1 sm:flex-none bg-gray-500 hover:bg-gray-600 active:scale-95
-                   text-white font-bold px-5 py-3 rounded-xl shadow transition-all
-                   flex items-center gap-2 justify-center text-sm"
-          >
-            🎲 Tìm Ngẫu Nhiên
-          </button>
+  <main class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
+    <section class="relative overflow-hidden rounded-3xl bg-slate-900 px-6 py-8 text-white shadow-xl sm:px-10 sm:py-12">
+      <div class="soft-grid pointer-events-none absolute inset-0 opacity-20"></div>
+      <div class="relative grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+        <div>
+          <p class="mb-3 text-sm font-semibold uppercase tracking-[0.18em] text-blue-300">Simple. Clear. Reliable.</p>
+          <h1 class="max-w-xl text-3xl font-black leading-tight sm:text-5xl">Đơn hàng của bạn đang ở đâu?</h1>
+          <p class="mt-4 max-w-xl text-sm leading-6 text-slate-300 sm:text-base">Tra cứu trạng thái giao hàng và xem lịch sử xử lý đơn hàng chỉ với một mã đơn.</p>
+          <p class="mt-2 text-sm text-slate-400">Track your shipment status and order history with your order ID.</p>
         </div>
+        <form id="tracking-form" class="rounded-2xl bg-white p-4 text-slate-900 shadow-2xl sm:p-5">
+          <label for="order-id" class="mb-2 block text-sm font-bold">Mã đơn hàng <span class="font-normal text-slate-500">/ Order ID</span></label>
+          <div class="flex flex-col gap-3 sm:flex-row">
+            <input id="order-id" name="orderId" autocomplete="off" required maxlength="40" placeholder="Ví dụ: ORD-2026-1001" class="min-w-0 flex-1 rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100">
+            <button type="submit" class="rounded-xl bg-blue-600 px-5 py-3 text-sm font-bold text-white transition hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-200">Tra cứu</button>
+          </div>
+          <p class="mt-3 text-xs leading-5 text-slate-500">Bản demo hiện sử dụng dữ liệu mẫu. Chưa kết nối API hoặc dữ liệu AWS thật.</p>
+          <div class="mt-4 flex flex-wrap items-center gap-2 text-xs">
+            <span class="text-slate-500">Thử mã mẫu:</span>
+            <button type="button" data-demo-id="ORD-2026-1001" class="rounded-lg bg-slate-100 px-2.5 py-1.5 font-semibold text-slate-700 hover:bg-blue-50 hover:text-blue-700">1001 · Đang giao</button>
+            <button type="button" data-demo-id="ORD-2026-1002" class="rounded-lg bg-slate-100 px-2.5 py-1.5 font-semibold text-slate-700 hover:bg-blue-50 hover:text-blue-700">1002 · Đã giao</button>
+          </div>
+        </form>
       </div>
-      <p class="text-xs text-gray-400 mt-2">
-        💡 Thử: "trứng, cà chua" hoặc "thịt băm" hoặc "tỏi"
-      </p>
     </section>
 
-    <!-- ===== STATUS BAR ===== -->
-    <div id="status-bar" class="hidden mb-5 flex items-center gap-3 bg-blue-50 border border-blue-200
-                                rounded-xl px-4 py-3 text-sm text-blue-700 font-medium">
-      <span id="status-icon"></span>
-      <span id="status-text"></span>
-    </div>
+    <div id="message" role="status" aria-live="polite" class="mt-6 hidden rounded-xl border px-4 py-3 text-sm"></div>
 
-    <!-- ===== RESULTS ===== -->
-    <div id="results-header" class="hidden flex items-center justify-between mb-4">
-      <h2 class="text-lg font-bold text-gray-700">
-        📋 Kết quả tìm kiếm: <span id="result-count" class="text-orange-500"></span> món
-      </h2>
-      <span id="data-source-badge" class="text-xs px-2 py-1 rounded-full font-semibold"></span>
-    </div>
+    <section id="order-result" class="mt-6 hidden">
+      <div class="mb-5 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
+        <div>
+          <p class="text-sm font-semibold text-blue-700">ORDER DETAILS · CHI TIẾT ĐƠN HÀNG</p>
+          <h2 class="mt-1 text-2xl font-extrabold tracking-tight" id="result-heading">Đơn hàng</h2>
+        </div>
+        <span id="status-pill" class="inline-flex w-fit items-center rounded-full px-3 py-1.5 text-sm font-bold"></span>
+      </div>
 
-    <div id="results-grid"
-         class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-    </div>
+      <div class="grid gap-5 lg:grid-cols-[1.2fr_0.8fr]">
+        <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
+          <div class="flex items-start justify-between gap-4 border-b border-slate-100 pb-5">
+            <div>
+              <p class="text-sm text-slate-500">Dự kiến giao hàng / Estimated delivery</p>
+              <p id="estimated-delivery" class="mt-1 text-lg font-bold"></p>
+            </div>
+            <span class="rounded-xl bg-blue-50 p-3 text-blue-700">
+              <svg viewBox="0 0 24 24" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7.5h11v10H3zM14 11h4l3 3v3h-7z"/><circle cx="7" cy="18" r="2"/><circle cx="18" cy="18" r="2"/></svg>
+            </span>
+          </div>
+          <div class="grid gap-4 py-5 sm:grid-cols-2">
+            <div><p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Người nhận / Recipient</p><p id="recipient" class="mt-1 font-semibold"></p></div>
+            <div><p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Đơn vị vận chuyển / Carrier</p><p id="carrier" class="mt-1 font-semibold"></p></div>
+            <div><p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Mã vận đơn / Tracking number</p><p id="tracking-number" class="mt-1 font-semibold"></p></div>
+            <div><p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Số sản phẩm / Items</p><p id="item-count" class="mt-1 font-semibold"></p></div>
+          </div>
+          <div class="border-t border-slate-100 pt-5">
+            <h3 class="font-bold">Sản phẩm trong đơn / Items in this order</h3>
+            <ul id="item-list" class="mt-3 divide-y divide-slate-100"></ul>
+          </div>
+        </article>
 
-    <!-- Empty State -->
-    <div id="empty-state" class="hidden text-center py-16">
-      <div class="text-6xl mb-4">🥺</div>
-      <p class="text-gray-500 text-lg font-semibold">Không tìm thấy món ăn phù hợp.</p>
-      <p class="text-gray-400 text-sm mt-1">Thử nhập nguyên liệu khác hoặc nhấn "Tìm Ngẫu Nhiên".</p>
-    </div>
+        <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
+          <h3 class="text-lg font-extrabold">Lịch sử đơn hàng</h3>
+          <p class="mt-1 text-sm text-slate-500">Order status timeline</p>
+          <ol id="timeline" class="mt-6 space-y-5"></ol>
+        </article>
+      </div>
+    </section>
+
+    <section id="empty-state" class="mt-8 rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-10 text-center">
+      <span class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 text-blue-700">
+        <svg viewBox="0 0 24 24" class="h-7 w-7" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path stroke-linecap="round" d="m16 16 4 4"/></svg>
+      </span>
+      <h2 class="mt-4 text-lg font-bold">Nhập mã đơn để bắt đầu</h2>
+      <p class="mt-1 text-sm text-slate-500">Enter an order ID above to view its latest status.</p>
+    </section>
+
+    <section class="mt-8 grid gap-4 sm:grid-cols-3">
+      <div class="rounded-2xl border border-slate-200 bg-white p-5"><span class="text-xs font-bold uppercase tracking-wide text-slate-500">Bước 01</span><h3 class="mt-2 font-bold">Xác nhận đơn</h3><p class="mt-1 text-sm text-slate-500">Order confirmed</p></div>
+      <div class="rounded-2xl border border-slate-200 bg-white p-5"><span class="text-xs font-bold uppercase tracking-wide text-slate-500">Bước 02</span><h3 class="mt-2 font-bold">Đóng gói & vận chuyển</h3><p class="mt-1 text-sm text-slate-500">Packed and shipped</p></div>
+      <div class="rounded-2xl border border-slate-200 bg-white p-5"><span class="text-xs font-bold uppercase tracking-wide text-slate-500">Bước 03</span><h3 class="mt-2 font-bold">Giao hàng</h3><p class="mt-1 text-sm text-slate-500">Delivered to recipient</p></div>
+    </section>
   </main>
 
-  <!-- ===== POPUP MODAL ===== -->
-  <div id="popup-overlay" class="popup-overlay" onclick="closePopup(event)">
-    <div id="popup-box"
-         class="bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[85vh] overflow-y-auto
-                border border-orange-100 relative">
-      <!-- Close button -->
-      <button onclick="closePopupDirect()"
-              class="absolute top-3 right-3 text-gray-400 hover:text-gray-700 transition z-10">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
-        </svg>
-      </button>
-      <!-- Image -->
-      <img id="popup-img" src="" alt=""
-           class="w-full h-52 object-cover rounded-t-2xl bg-orange-50" />
-      <div class="p-6">
-        <h3 id="popup-name" class="text-xl font-extrabold text-gray-800 mb-1"></h3>
-        <div id="popup-ingredients" class="mb-4"></div>
-        <h4 class="font-bold text-orange-600 mb-2 flex items-center gap-2">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round"
-              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586
-                 a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-          </svg>
-          Cách Làm
-        </h4>
-        <ol id="popup-instructions" class="space-y-2 text-sm text-gray-700 list-decimal list-inside"></ol>
-      </div>
+  <footer class="mt-12 border-t border-slate-200 bg-white">
+    <div class="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-6 text-xs text-slate-500 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+      <p>TrackFlow · AWS Order Tracking System · FCAJ Workshop prototype</p>
+      <p>Demo only — no real customer or shipment data.</p>
     </div>
-  </div>
-
-  <!-- ===== FOOTER ===== -->
-  <footer class="text-center text-xs text-gray-400 py-6 mt-4">
-    AWS Serverless Lab · DynamoDB · Lambda · API Gateway · S3 · 2026
   </footer>
 
-  <!-- ===== SCRIPT ===== -->
   <script>
-    // ──────────────────────────────────────────────────────────
-    //  CONFIG: điền link API Gateway sau khi deploy lên AWS
-    // ──────────────────────────────────────────────────────────
-    const API_URL = ""; // ← Paste your API Gateway Invoke URL here
-
-    // ──────────────────────────────────────────────────────────
-    //  MOCK DATA (5 món ăn Việt Nam) — dùng khi API_URL trống
-    // ──────────────────────────────────────────────────────────
-    const MOCK_DATA = [
-      {
-        RecipeID: "R01",
-        Name: "Trứng Đúc Thịt",
-        Ingredients: ["trứng", "thịt băm", "hành lá", "nước mắm", "tiêu"],
-        Instructions: [
-          "Trộn đều trứng với thịt băm, hành lá thái nhỏ, nước mắm và tiêu.",
-          "Đun chảo với một chút dầu ăn ở lửa vừa.",
-          "Đổ hỗn hợp vào chảo, đậy nắp và hấp khoảng 10 phút.",
-          "Khi mặt trên se lại và chín vàng, tắt bếp.",
-          "Dùng nóng với cơm trắng."
-        ],
-        ImageURL: "https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=600&q=80"
+    // Demo records only. This object will later be replaced with API Gateway requests.
+    const DEMO_ORDERS = {
+      "ORD-2026-1001": {
+        orderId: "ORD-2026-1001",
+        status: "Đang giao",
+        statusKey: "shipping",
+        recipient: "Nguyễn Minh Anh",
+        carrier: "Đơn vị vận chuyển demo",
+        trackingNumber: "TRK-DEMO-1001",
+        estimatedDelivery: "24/10/2026",
+        items: [{ name: "Bàn phím cơ", quantity: 1 }, { name: "Lót chuột", quantity: 1 }],
+        history: [
+          { status: "Đã xác nhận đơn", detail: "Order confirmed", time: "21/10/2026 · 09:15", complete: true },
+          { status: "Đang đóng gói", detail: "Packed at warehouse", time: "21/10/2026 · 14:30", complete: true },
+          { status: "Đang giao hàng", detail: "Shipment is on the way", time: "22/10/2026 · 08:20", complete: true },
+          { status: "Giao hàng thành công", detail: "Delivered", time: "Chưa hoàn tất / Pending", complete: false }
+        ]
       },
-      {
-        RecipeID: "R02",
-        Name: "Đậu Sốt Cà Chua",
-        Ingredients: ["đậu hũ", "cà chua", "hành tím", "tỏi", "nước mắm", "đường"],
-        Instructions: [
-          "Cắt đậu hũ thành miếng vừa ăn, chiên vàng hai mặt.",
-          "Phi thơm hành tím và tỏi băm.",
-          "Cho cà chua thái nhỏ vào xào mềm.",
-          "Thêm đậu hũ đã chiên vào, nêm nước mắm, đường.",
-          "Đảo đều, nấu thêm 3 phút cho ngấm gia vị. Rắc hành lá lên trên."
-        ],
-        ImageURL: "https://images.unsplash.com/photo-1511690743698-d9d85f2fbf38?w=600&q=80"
-      },
-      {
-        RecipeID: "R03",
-        Name: "Canh Cà Chua Trứng",
-        Ingredients: ["cà chua", "trứng", "hành lá", "nước mắm", "muối"],
-        Instructions: [
-          "Đun sôi khoảng 500ml nước.",
-          "Cho cà chua thái múi vào khi nước sôi.",
-          "Đánh tan trứng, đổ từ từ vào nồi canh đang sôi, khuấy nhẹ.",
-          "Nêm nước mắm, muối cho vừa ăn.",
-          "Tắt bếp, rắc hành lá thái nhỏ. Dùng nóng."
-        ],
-        ImageURL: "https://images.unsplash.com/photo-1547592180-85f173990554?w=600&q=80"
-      },
-      {
-        RecipeID: "R04",
-        Name: "Thịt Kho Tàu",
-        Ingredients: ["thịt ba chỉ", "trứng", "nước dừa", "nước mắm", "đường", "tỏi", "tiêu"],
-        Instructions: [
-          "Ướp thịt ba chỉ với nước mắm, đường, tỏi, tiêu khoảng 30 phút.",
-          "Thắng đường vàng cánh gián, cho thịt vào đảo đều.",
-          "Đổ nước dừa vừa ngập thịt, đun sôi rồi hạ lửa nhỏ.",
-          "Thêm trứng luộc bóc vỏ vào nồi.",
-          "Kho liu riu 45–60 phút đến khi nước cạn sền sệt và thịt mềm."
-        ],
-        ImageURL: "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=600&q=80"
-      },
-      {
-        RecipeID: "R05",
-        Name: "Rau Muống Xào Tỏi",
-        Ingredients: ["rau muống", "tỏi", "dầu ăn", "nước mắm", "muối"],
-        Instructions: [
-          "Rau muống nhặt sạch, rửa và để ráo nước.",
-          "Đun chảo nóng với dầu ăn, phi thơm tỏi băm.",
-          "Cho rau muống vào xào lửa to, đảo liên tục.",
-          "Nêm nước mắm và muối cho vừa ăn.",
-          "Xào đến khi rau chín mềm nhưng vẫn giữ màu xanh. Dùng ngay."
-        ],
-        ImageURL: "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=600&q=80"
+      "ORD-2026-1002": {
+        orderId: "ORD-2026-1002",
+        status: "Đã giao",
+        statusKey: "delivered",
+        recipient: "Trần Gia Bảo",
+        carrier: "Đơn vị vận chuyển demo",
+        trackingNumber: "TRK-DEMO-1002",
+        estimatedDelivery: "21/10/2026 · Đã giao",
+        items: [{ name: "Chuột không dây", quantity: 1 }],
+        history: [
+          { status: "Đã xác nhận đơn", detail: "Order confirmed", time: "19/10/2026 · 10:05", complete: true },
+          { status: "Đang đóng gói", detail: "Packed at warehouse", time: "19/10/2026 · 15:40", complete: true },
+          { status: "Đang giao hàng", detail: "Shipment is on the way", time: "20/10/2026 · 08:10", complete: true },
+          { status: "Giao hàng thành công", detail: "Delivered", time: "21/10/2026 · 13:25", complete: true }
+        ]
       }
-    ];
+    };
 
-    // ──────────────────────────────────────────────────────────
-    //  UTILITIES
-    // ──────────────────────────────────────────────────────────
-    function showStatus(icon, text, colorClass = "bg-blue-50 border-blue-200 text-blue-700") {
-      const bar = document.getElementById("status-bar");
-      bar.className = `mb-5 flex items-center gap-3 ${colorClass} rounded-xl px-4 py-3 text-sm font-medium`;
-      document.getElementById("status-icon").innerHTML = icon;
-      document.getElementById("status-text").textContent = text;
-      bar.classList.remove("hidden");
-    }
-    function hideStatus() {
-      document.getElementById("status-bar").classList.add("hidden");
-    }
-    function setButtons(disabled) {
-      document.getElementById("search-btn").disabled = disabled;
-      document.getElementById("random-btn").disabled = disabled;
-      if (disabled) {
-        document.getElementById("search-btn").classList.add("opacity-60", "cursor-not-allowed");
-        document.getElementById("random-btn").classList.add("opacity-60", "cursor-not-allowed");
-      } else {
-        document.getElementById("search-btn").classList.remove("opacity-60", "cursor-not-allowed");
-        document.getElementById("random-btn").classList.remove("opacity-60", "cursor-not-allowed");
-      }
+    const form = document.getElementById("tracking-form");
+    const orderInput = document.getElementById("order-id");
+    const resultSection = document.getElementById("order-result");
+    const emptyState = document.getElementById("empty-state");
+    const message = document.getElementById("message");
+
+    function showMessage(text, type) {
+      message.textContent = text;
+      message.className = "mt-6 rounded-xl border px-4 py-3 text-sm " +
+        (type === "error"
+          ? "border-rose-200 bg-rose-50 text-rose-700"
+          : "border-emerald-200 bg-emerald-50 text-emerald-700");
+      message.classList.remove("hidden");
     }
 
-    // ──────────────────────────────────────────────────────────
-    //  RENDER RESULTS
-    // ──────────────────────────────────────────────────────────
-    function renderResults(recipes, isLive = false) {
-      const grid = document.getElementById("results-grid");
-      const header = document.getElementById("results-header");
-      const emptyState = document.getElementById("empty-state");
+    function statusClasses(statusKey) {
+      if (statusKey === "delivered") return "bg-emerald-100 text-emerald-800";
+      if (statusKey === "shipping") return "bg-blue-100 text-blue-800";
+      if (statusKey === "cancelled" || statusKey === "failed") return "bg-rose-100 text-rose-800";
+      return "bg-amber-100 text-amber-800";
+    }
 
-      grid.innerHTML = "";
-      emptyState.classList.add("hidden");
+    function addTimelineStep(historyItem, index, total) {
+      const li = document.createElement("li");
+      li.className = "step relative flex gap-4";
+      const dotWrap = document.createElement("div");
+      dotWrap.className = "relative flex w-8 shrink-0 justify-center";
+      const line = document.createElement("span");
+      line.className = "step-line";
+      const dot = document.createElement("span");
+      dot.className = "step-dot mt-0.5 flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold " +
+        (historyItem.complete ? "bg-blue-600 text-white" : "border-2 border-slate-200 bg-white text-slate-400");
+      dot.textContent = historyItem.complete ? "✓" : String(index + 1);
+      dotWrap.append(line, dot);
 
-      if (!recipes || recipes.length === 0) {
-        header.classList.add("hidden");
-        emptyState.classList.remove("hidden");
-        return;
-      }
+      const body = document.createElement("div");
+      body.className = "min-w-0 flex-1 pb-1";
+      const title = document.createElement("p");
+      title.className = "font-bold " + (historyItem.complete ? "text-slate-900" : "text-slate-400");
+      title.textContent = historyItem.status;
+      const detail = document.createElement("p");
+      detail.className = "mt-0.5 text-xs text-slate-500";
+      detail.textContent = historyItem.detail;
+      const time = document.createElement("p");
+      time.className = "mt-2 text-xs font-medium text-slate-500";
+      time.textContent = historyItem.time;
+      body.append(title, detail, time);
+      li.append(dotWrap, body);
+      return li;
+    }
 
-      header.classList.remove("hidden");
-      document.getElementById("result-count").textContent = recipes.length;
+    function renderOrder(order) {
+      document.getElementById("result-heading").textContent = order.orderId;
+      const pill = document.getElementById("status-pill");
+      pill.textContent = order.status;
+      pill.className = "inline-flex w-fit items-center rounded-full px-3 py-1.5 text-sm font-bold " + statusClasses(order.statusKey);
+      document.getElementById("estimated-delivery").textContent = order.estimatedDelivery;
+      document.getElementById("recipient").textContent = order.recipient;
+      document.getElementById("carrier").textContent = order.carrier;
+      document.getElementById("tracking-number").textContent = order.trackingNumber;
+      document.getElementById("item-count").textContent = order.items.reduce((sum, item) => sum + item.quantity, 0) + " sản phẩm";
 
-      const badge = document.getElementById("data-source-badge");
-      if (isLive) {
-        badge.textContent = "🟢 Dữ liệu từ AWS DynamoDB";
-        badge.className = "text-xs px-3 py-1 rounded-full font-semibold bg-green-100 text-green-700 border border-green-200";
-      } else {
-        badge.textContent = "🟡 Dữ liệu mẫu (Offline)";
-        badge.className = "text-xs px-3 py-1 rounded-full font-semibold bg-yellow-100 text-yellow-700 border border-yellow-200";
-      }
-
-      recipes.forEach((recipe, idx) => {
-        const card = document.createElement("div");
-        card.className = "recipe-card fade-in bg-white rounded-2xl overflow-hidden shadow border border-orange-50";
-        card.style.animationDelay = `${idx * 60}ms`;
-
-        const ingredients = Array.isArray(recipe.Ingredients)
-          ? recipe.Ingredients
-          : (recipe.Ingredients || "").split(",").map(s => s.trim());
-
-        const tagsHtml = ingredients
-          .map(ing => `<span class="ingredient-tag">${ing}</span>`)
-          .join("");
-
-        card.innerHTML = `
-          <div class="relative">
-            <img
-              src="${recipe.ImageURL || 'https://images.unsplash.com/photo-1547592180-85f173990554?w=600&q=80'}"
-              alt="${recipe.Name}"
-              class="w-full h-44 object-cover bg-orange-50"
-              onerror="this.src='https://images.unsplash.com/photo-1547592180-85f173990554?w=600&q=80'"
-            />
-            <span class="absolute top-2 left-2 bg-orange-500 text-white text-xs font-bold
-                         px-2 py-0.5 rounded-full shadow">#${recipe.RecipeID || idx+1}</span>
-          </div>
-          <div class="p-4">
-            <h3 class="font-extrabold text-gray-800 text-base mb-2">${recipe.Name}</h3>
-            <p class="text-xs text-gray-500 font-medium mb-1">Nguyên liệu:</p>
-            <div class="mb-3">${tagsHtml}</div>
-            <button
-              onclick='openPopup(${JSON.stringify(recipe).replace(/'/g, "\\'")})'
-              class="w-full mt-1 bg-orange-500 hover:bg-orange-600 active:scale-95
-                     text-white text-sm font-bold py-2 rounded-xl transition-all
-                     flex items-center justify-center gap-2"
-            >
-              📖 Xem cách làm
-            </button>
-          </div>
-        `;
-        grid.appendChild(card);
+      const itemList = document.getElementById("item-list");
+      itemList.replaceChildren();
+      order.items.forEach(item => {
+        const li = document.createElement("li");
+        li.className = "flex items-center justify-between gap-3 py-3 text-sm";
+        const name = document.createElement("span");
+        name.className = "font-medium";
+        name.textContent = item.name;
+        const quantity = document.createElement("span");
+        quantity.className = "rounded-lg bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600";
+        quantity.textContent = "x" + item.quantity;
+        li.append(name, quantity);
+        itemList.append(li);
       });
+
+      const timeline = document.getElementById("timeline");
+      timeline.replaceChildren();
+      order.history.forEach((item, index) => timeline.append(addTimelineStep(item, index, order.history.length)));
+
+      resultSection.classList.remove("hidden");
+      emptyState.classList.add("hidden");
+      message.classList.add("hidden");
     }
 
-    // ──────────────────────────────────────────────────────────
-    //  MOCK FILTER (offline)
-    // ──────────────────────────────────────────────────────────
-    function filterMockData(keywords) {
-      if (!keywords || keywords.length === 0) return MOCK_DATA;
-      return MOCK_DATA.filter(recipe =>
-        keywords.some(kw =>
-          recipe.Ingredients.some(ing =>
-            ing.toLowerCase().includes(kw.toLowerCase())
-          )
-        )
-      );
-    }
-
-    // ──────────────────────────────────────────────────────────
-    //  SEARCH (API or MOCK)
-    // ──────────────────────────────────────────────────────────
-    async function searchRecipes() {
-      const raw = document.getElementById("ingredient-input").value.trim();
-      if (!raw) {
-        showStatus("⚠️", "Vui lòng nhập ít nhất một nguyên liệu!",
-          "bg-yellow-50 border-yellow-200 text-yellow-700");
+    function searchOrder(orderId) {
+      const normalizedId = orderId.trim().toUpperCase();
+      if (!normalizedId) {
+        showMessage("Vui lòng nhập mã đơn hàng. / Please enter an order ID.", "error");
         return;
       }
-      if (raw.length > 200) {
-        showStatus("⛔", "Nguyên liệu nhập quá dài (tối đa 200 ký tự).",
-          "bg-red-50 border-red-200 text-red-700");
+      const order = DEMO_ORDERS[normalizedId];
+      if (!order) {
+        resultSection.classList.add("hidden");
+        emptyState.classList.remove("hidden");
+        showMessage("Không tìm thấy mã đơn trong dữ liệu demo. Thử ORD-2026-1001 hoặc ORD-2026-1002.", "error");
         return;
       }
-
-      const keywords = raw.split(",").map(s => s.trim()).filter(Boolean);
-
-      setButtons(true);
-
-      if (!API_URL) {
-        // ── OFFLINE MODE ──
-        showStatus('<span class="spinner"></span>',
-          `Đang lọc "${keywords.join(", ")}" từ dữ liệu mẫu...`);
-        await new Promise(r => setTimeout(r, 500)); // simulate delay
-
-        const results = filterMockData(keywords);
-        renderResults(results, false);
-
-        if (results.length > 0) {
-          showStatus("✅", `Tìm thấy ${results.length} món phù hợp (offline mock).`,
-            "bg-green-50 border-green-200 text-green-700");
-        } else {
-          hideStatus();
-        }
-      } else {
-        // ── LIVE API MODE ──
-        showStatus('<span class="spinner"></span>',
-          `Đang truy vấn AWS Lambda... (${keywords.join(", ")})`);
-        try {
-          const res = await fetch(`${API_URL}?ingredients=${encodeURIComponent(raw)}`, {
-            method: "GET",
-            headers: { "Content-Type": "application/json" }
-          });
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
-          const data = await res.json();
-          const recipes = data.recipes || data.items || data || [];
-          renderResults(recipes, true);
-          showStatus("✅", `Tìm thấy ${recipes.length} món ăn từ DynamoDB.`,
-            "bg-green-50 border-green-200 text-green-700");
-        } catch (err) {
-          showStatus("❌", `Lỗi kết nối API: ${err.message}. Hiển thị dữ liệu mẫu.`,
-            "bg-red-50 border-red-200 text-red-700");
-          renderResults(filterMockData(keywords), false);
-        }
-      }
-
-      setButtons(false);
+      renderOrder(order);
+      showMessage("Đã tìm thấy đơn hàng trong dữ liệu minh họa. / Demo order found.", "success");
     }
 
-    // ──────────────────────────────────────────────────────────
-    //  RANDOM
-    // ──────────────────────────────────────────────────────────
-    async function randomRecipes() {
-      document.getElementById("ingredient-input").value = "";
-      setButtons(true);
-
-      if (!API_URL) {
-        showStatus('<span class="spinner"></span>', "Đang chọn món ngẫu nhiên...");
-        await new Promise(r => setTimeout(r, 400));
-        // Shuffle and pick 3
-        const shuffled = [...MOCK_DATA].sort(() => Math.random() - 0.5).slice(0, 3);
-        renderResults(shuffled, false);
-        showStatus("🎲", `Đã chọn ngẫu nhiên ${shuffled.length} món ăn!`,
-          "bg-purple-50 border-purple-200 text-purple-700");
-      } else {
-        showStatus('<span class="spinner"></span>', "Đang lấy món ngẫu nhiên từ AWS...");
-        try {
-          const res = await fetch(`${API_URL}?random=true`);
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
-          const data = await res.json();
-          const recipes = data.recipes || data.items || data || [];
-          renderResults(recipes, true);
-          showStatus("🎲", `Đã lấy ${recipes.length} món ngẫu nhiên từ DynamoDB!`,
-            "bg-purple-50 border-purple-200 text-purple-700");
-        } catch (err) {
-          showStatus("❌", `Lỗi API: ${err.message}. Dùng dữ liệu mẫu.`,
-            "bg-red-50 border-red-200 text-red-700");
-          const shuffled = [...MOCK_DATA].sort(() => Math.random() - 0.5).slice(0, 3);
-          renderResults(shuffled, false);
-        }
-      }
-
-      setButtons(false);
-    }
-
-    // ──────────────────────────────────────────────────────────
-    //  POPUP
-    // ──────────────────────────────────────────────────────────
-    function openPopup(recipe) {
-      document.getElementById("popup-img").src =
-        recipe.ImageURL || "https://images.unsplash.com/photo-1547592180-85f173990554?w=600&q=80";
-      document.getElementById("popup-img").alt = recipe.Name;
-      document.getElementById("popup-name").textContent = recipe.Name;
-
-      const ingredients = Array.isArray(recipe.Ingredients)
-        ? recipe.Ingredients
-        : (recipe.Ingredients || "").split(",").map(s => s.trim());
-      document.getElementById("popup-ingredients").innerHTML =
-        `<p class="text-xs text-gray-500 font-semibold mb-1">🧅 Nguyên liệu:</p>`
-        + ingredients.map(i => `<span class="ingredient-tag">${i}</span>`).join("");
-
-      const steps = Array.isArray(recipe.Instructions)
-        ? recipe.Instructions
-        : [recipe.Instructions || "Chưa có hướng dẫn."];
-      document.getElementById("popup-instructions").innerHTML =
-        steps.map(step => `<li class="leading-relaxed">${step}</li>`).join("");
-
-      document.getElementById("popup-overlay").classList.add("active");
-      document.body.style.overflow = "hidden";
-    }
-    function closePopup(e) {
-      if (e.target === document.getElementById("popup-overlay")) closePopupDirect();
-    }
-    function closePopupDirect() {
-      document.getElementById("popup-overlay").classList.remove("active");
-      document.body.style.overflow = "";
-    }
-
-    // Enter key support
-    document.getElementById("ingredient-input").addEventListener("keydown", e => {
-      if (e.key === "Enter") searchRecipes();
+    form.addEventListener("submit", event => {
+      event.preventDefault();
+      searchOrder(orderInput.value);
     });
 
-    // Escape key closes popup
-    document.addEventListener("keydown", e => {
-      if (e.key === "Escape") closePopupDirect();
+    document.querySelectorAll("[data-demo-id]").forEach(button => {
+      button.addEventListener("click", () => {
+        orderInput.value = button.dataset.demoId;
+        searchOrder(button.dataset.demoId);
+      });
     });
   </script>
 </body>
