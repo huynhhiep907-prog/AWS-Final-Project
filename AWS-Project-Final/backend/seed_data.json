@@ -1,72 +1,362 @@
 [
   {
     "RecipeID": "R01",
-    "Name": "Trứng Đúc Thịt",
-    "Ingredients": ["trứng", "thịt băm", "hành lá", "nước mắm", "tiêu", "dầu ăn"],
-    "Instructions": "1. Trộn đều trứng với thịt băm, hành lá thái nhỏ, nước mắm và tiêu. 2. Đun chảo với dầu ăn ở lửa vừa. 3. Đổ hỗn hợp vào chảo, đậy nắp và hấp/chiên khoảng 10 phút. 4. Khi mặt trên se lại và vàng đều, tắt bếp. 5. Dùng nóng với cơm trắng.",
-    "ImageURL": "https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=600&q=80"
+    "Name": "Trứng đúc thịt",
+    "Ingredients": [
+      "trứng",
+      "thịt heo xay",
+      "hành lá",
+      "nước mắm",
+      "tiêu",
+      "dầu ăn"
+    ],
+    "Instructions": [
+      "Trộn trứng với thịt heo xay, hành lá thái nhỏ và gia vị.",
+      "Làm nóng chảo với một ít dầu.",
+      "Đổ hỗn hợp vào chảo, đậy nắp và nấu chín khoảng 10–12 phút.",
+      "Kiểm tra thịt và trứng đã chín hoàn toàn rồi dùng nóng."
+    ],
+    "ImageURL": "https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=600&q=80",
+    "CookingTimeMinutes": 20,
+    "EstimatedCostVND": 28000,
+    "Servings": 2,
+    "MoodTags": [
+      "comforting",
+      "energizing"
+    ],
+    "HealthTags": [
+      "high_protein"
+    ],
+    "DietTags": [],
+    "Allergens": [
+      "trứng"
+    ],
+    "Nutrition": {
+      "CaloriesKcal": 320,
+      "ProteinG": 22,
+      "CarbsG": 8,
+      "FatG": 22,
+      "SaturatedFatG": 7,
+      "SodiumMg": 620
+    },
+    "Notes": "Dữ liệu dinh dưỡng và chi phí là ước tính minh họa."
   },
   {
     "RecipeID": "R02",
-    "Name": "Đậu Sốt Cà Chua",
-    "Ingredients": ["đậu hũ", "cà chua", "hành tím", "tỏi", "nước mắm", "đường", "dầu ăn", "hành lá"],
-    "Instructions": "1. Cắt đậu hũ thành miếng vừa ăn, chiên vàng hai mặt. 2. Phi thơm hành tím và tỏi băm nhỏ. 3. Cho cà chua thái hạt lựu vào xào mềm. 4. Thêm đậu hũ vào, nêm nước mắm và đường cho vừa ăn. 5. Đảo đều, nấu thêm 3 phút. Rắc hành lá lên trên và tắt bếp.",
-    "ImageURL": "https://images.unsplash.com/photo-1511690743698-d9d85f2fbf38?w=600&q=80"
+    "Name": "Đậu hũ sốt cà chua",
+    "Ingredients": [
+      "đậu hũ",
+      "cà chua",
+      "hành tím",
+      "tỏi",
+      "nước tương",
+      "dầu ăn"
+    ],
+    "Instructions": [
+      "Cắt đậu hũ thành miếng vừa ăn.",
+      "Phi thơm hành tím và tỏi với ít dầu.",
+      "Cho cà chua vào nấu mềm, thêm một ít nước nếu cần.",
+      "Cho đậu hũ và nước tương vào, rim nhỏ lửa 5–7 phút."
+    ],
+    "ImageURL": "https://images.unsplash.com/photo-1511690743698-d9d85f2fbf38?w=600&q=80",
+    "CookingTimeMinutes": 20,
+    "EstimatedCostVND": 22000,
+    "Servings": 2,
+    "MoodTags": [
+      "fresh",
+      "light"
+    ],
+    "HealthTags": [
+      "low_sodium",
+      "controlled_carb",
+      "low_saturated_fat",
+      "light"
+    ],
+    "DietTags": [
+      "vegetarian",
+      "vegan",
+      "low_calorie"
+    ],
+    "Allergens": [
+      "đậu nành"
+    ],
+    "Nutrition": {
+      "CaloriesKcal": 210,
+      "ProteinG": 12,
+      "CarbsG": 18,
+      "FatG": 10,
+      "SaturatedFatG": 1.5,
+      "SodiumMg": 380
+    },
+    "Notes": "Chọn nước tương ít natri nếu cần hạn chế natri."
   },
   {
     "RecipeID": "R03",
-    "Name": "Canh Cà Chua Trứng",
-    "Ingredients": ["cà chua", "trứng", "hành lá", "nước mắm", "muối", "nước"],
-    "Instructions": "1. Đun sôi 500ml nước. 2. Cho cà chua thái múi cau vào khi nước sôi. 3. Đánh tan trứng, đổ từ từ vào nồi canh đang sôi, khuấy nhẹ tay. 4. Nêm nước mắm và muối cho vừa ăn. 5. Tắt bếp, rắc hành lá thái nhỏ. Dùng ngay khi còn nóng.",
-    "ImageURL": "https://images.unsplash.com/photo-1547592180-85f173990554?w=600&q=80"
+    "Name": "Canh cà chua trứng",
+    "Ingredients": [
+      "cà chua",
+      "trứng",
+      "hành lá",
+      "nước",
+      "muối"
+    ],
+    "Instructions": [
+      "Đun sôi khoảng 500 ml nước.",
+      "Cho cà chua thái múi cau vào nấu mềm.",
+      "Đánh tan trứng, rót từ từ vào nồi và khuấy nhẹ.",
+      "Nêm gia vị vừa phải, rắc hành lá rồi tắt bếp."
+    ],
+    "ImageURL": "https://images.unsplash.com/photo-1547592180-85f173990554?w=600&q=80",
+    "CookingTimeMinutes": 15,
+    "EstimatedCostVND": 18000,
+    "Servings": 2,
+    "MoodTags": [
+      "light",
+      "fresh"
+    ],
+    "HealthTags": [
+      "low_sodium",
+      "controlled_carb",
+      "light"
+    ],
+    "DietTags": [
+      "vegetarian",
+      "low_calorie"
+    ],
+    "Allergens": [
+      "trứng"
+    ],
+    "Nutrition": {
+      "CaloriesKcal": 125,
+      "ProteinG": 8,
+      "CarbsG": 9,
+      "FatG": 6,
+      "SaturatedFatG": 2,
+      "SodiumMg": 390
+    },
+    "Notes": "Điều chỉnh lượng muối theo nhu cầu cá nhân."
   },
   {
     "RecipeID": "R04",
-    "Name": "Thịt Kho Tàu",
-    "Ingredients": ["thịt ba chỉ", "trứng", "nước dừa", "nước mắm", "đường", "tỏi", "tiêu", "hành tím"],
-    "Instructions": "1. Ướp thịt ba chỉ với nước mắm, đường, tỏi, tiêu khoảng 30 phút. 2. Thắng đường vàng cánh gián trong nồi, cho thịt vào đảo đều. 3. Đổ nước dừa vừa ngập thịt, đun sôi rồi hạ lửa nhỏ. 4. Thêm trứng luộc bóc vỏ vào nồi. 5. Kho liu riu 45–60 phút đến khi nước cạn sền sệt và thịt mềm.",
-    "ImageURL": "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=600&q=80"
+    "Name": "Rau muống xào tỏi",
+    "Ingredients": [
+      "rau muống",
+      "tỏi",
+      "dầu ăn",
+      "nước tương"
+    ],
+    "Instructions": [
+      "Nhặt, rửa sạch rau muống và để ráo.",
+      "Phi thơm tỏi với một ít dầu.",
+      "Cho rau vào xào nhanh trên lửa lớn đến khi chín.",
+      "Nêm một lượng nhỏ nước tương rồi dùng ngay."
+    ],
+    "ImageURL": "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=600&q=80",
+    "CookingTimeMinutes": 12,
+    "EstimatedCostVND": 15000,
+    "Servings": 2,
+    "MoodTags": [
+      "fresh",
+      "light"
+    ],
+    "HealthTags": [
+      "low_sodium",
+      "controlled_carb",
+      "low_saturated_fat",
+      "light"
+    ],
+    "DietTags": [
+      "vegetarian",
+      "vegan",
+      "low_calorie"
+    ],
+    "Allergens": [
+      "đậu nành"
+    ],
+    "Nutrition": {
+      "CaloriesKcal": 95,
+      "ProteinG": 4,
+      "CarbsG": 8,
+      "FatG": 6,
+      "SaturatedFatG": 1,
+      "SodiumMg": 280
+    },
+    "Notes": "Có thể giảm hoặc bỏ nước tương để giảm natri."
   },
   {
     "RecipeID": "R05",
-    "Name": "Rau Muống Xào Tỏi",
-    "Ingredients": ["rau muống", "tỏi", "dầu ăn", "nước mắm", "muối"],
-    "Instructions": "1. Rau muống nhặt sạch, rửa kỹ và để ráo nước. 2. Đun chảo nóng với dầu ăn, phi thơm tỏi băm. 3. Cho rau muống vào xào lửa to, đảo liên tục. 4. Nêm nước mắm và muối cho vừa ăn. 5. Xào đến khi rau chín mềm nhưng vẫn giữ màu xanh. Dùng ngay.",
-    "ImageURL": "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=600&q=80"
+    "Name": "Gà kho gừng",
+    "Ingredients": [
+      "thịt gà",
+      "gừng",
+      "tỏi",
+      "hành tím",
+      "nước mắm",
+      "đường",
+      "tiêu"
+    ],
+    "Instructions": [
+      "Chặt gà thành miếng vừa ăn, rửa sạch và để ráo.",
+      "Ướp gà với gừng, tỏi, hành tím và gia vị khoảng 15 phút.",
+      "Áp chảo cho thịt săn lại, thêm ít nước.",
+      "Kho đến khi gà chín hoàn toàn và nước sốt sệt lại."
+    ],
+    "ImageURL": "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=600&q=80",
+    "CookingTimeMinutes": 35,
+    "EstimatedCostVND": 32000,
+    "Servings": 2,
+    "MoodTags": [
+      "comforting",
+      "energizing"
+    ],
+    "HealthTags": [
+      "high_protein",
+      "controlled_carb",
+      "low_saturated_fat"
+    ],
+    "DietTags": [],
+    "Allergens": [],
+    "Nutrition": {
+      "CaloriesKcal": 290,
+      "ProteinG": 27,
+      "CarbsG": 12,
+      "FatG": 14,
+      "SaturatedFatG": 3.5,
+      "SodiumMg": 720
+    },
+    "Notes": "Nước mắm có thể làm tăng natri trong món ăn."
   },
   {
     "RecipeID": "R06",
-    "Name": "Bún Bò Huế",
-    "Ingredients": ["bún", "thịt bò", "giò heo", "sả", "mắm ruốc", "ớt", "hành tím", "tỏi"],
-    "Instructions": "1. Hầm giò heo và thịt bò với sả đập dập, hành tím nướng. 2. Pha mắm ruốc với nước sôi, lọc lấy nước trong. 3. Cho nước mắm ruốc vào nồi nước dùng. 4. Nêm ớt, đường, nước mắm cho vừa. 5. Chan nước dùng sôi lên bát bún, thêm thịt bò thái mỏng và giò heo.",
-    "ImageURL": "https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?w=600&q=80"
+    "Name": "Bò xào bông cải",
+    "Ingredients": [
+      "thịt bò",
+      "bông cải xanh",
+      "tỏi",
+      "dầu ăn",
+      "nước tương"
+    ],
+    "Instructions": [
+      "Thái bò mỏng, bông cải rửa sạch và cắt miếng vừa ăn.",
+      "Chần bông cải 1–2 phút rồi để ráo.",
+      "Phi thơm tỏi, xào bò nhanh đến khi gần chín.",
+      "Cho bông cải vào đảo đều, nêm vừa ăn và nấu chín."
+    ],
+    "ImageURL": "https://images.unsplash.com/photo-1547592180-85f173990554?w=600&q=80",
+    "CookingTimeMinutes": 25,
+    "EstimatedCostVND": 35000,
+    "Servings": 2,
+    "MoodTags": [
+      "fresh",
+      "energizing"
+    ],
+    "HealthTags": [
+      "high_protein",
+      "controlled_carb",
+      "low_saturated_fat"
+    ],
+    "DietTags": [],
+    "Allergens": [
+      "đậu nành"
+    ],
+    "Nutrition": {
+      "CaloriesKcal": 275,
+      "ProteinG": 25,
+      "CarbsG": 14,
+      "FatG": 13,
+      "SaturatedFatG": 4,
+      "SodiumMg": 560
+    },
+    "Notes": "Dùng nước tương vừa phải; giá trị dinh dưỡng là ước tính."
   },
   {
     "RecipeID": "R07",
-    "Name": "Gà Kho Gừng",
-    "Ingredients": ["thịt gà", "gừng", "nước mắm", "đường", "tỏi", "tiêu", "hành lá"],
-    "Instructions": "1. Chặt gà thành miếng vừa ăn, rửa sạch, để ráo. 2. Ướp gà với nước mắm, đường, tỏi băm, tiêu, gừng thái sợi 30 phút. 3. Xào gà ở lửa lớn đến khi săn mặt. 4. Thêm một chút nước, kho ở lửa vừa cho đến khi nước cạn sền sệt. 5. Nêm lại gia vị, rắc hành lá lên trên.",
-    "ImageURL": "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=600&q=80"
+    "Name": "Cá basa hấp gừng",
+    "Ingredients": [
+      "cá basa",
+      "gừng",
+      "hành lá",
+      "tỏi",
+      "nước tương"
+    ],
+    "Instructions": [
+      "Rửa cá và thấm khô.",
+      "Xếp gừng, hành lá lên cá.",
+      "Hấp đến khi cá chín hoàn toàn, thường khoảng 10–15 phút tùy độ dày.",
+      "Nêm nhẹ nước tương và dùng nóng."
+    ],
+    "ImageURL": "https://images.unsplash.com/photo-1559847844-5315695dadae?w=600&q=80",
+    "CookingTimeMinutes": 25,
+    "EstimatedCostVND": 36000,
+    "Servings": 2,
+    "MoodTags": [
+      "fresh",
+      "light"
+    ],
+    "HealthTags": [
+      "high_protein",
+      "controlled_carb",
+      "low_saturated_fat",
+      "light"
+    ],
+    "DietTags": [],
+    "Allergens": [
+      "cá",
+      "đậu nành"
+    ],
+    "Nutrition": {
+      "CaloriesKcal": 220,
+      "ProteinG": 26,
+      "CarbsG": 5,
+      "FatG": 10,
+      "SaturatedFatG": 2,
+      "SodiumMg": 420
+    },
+    "Notes": "Không dùng nếu dị ứng cá; ước tính dinh dưỡng mang tính tham khảo."
   },
   {
     "RecipeID": "R08",
-    "Name": "Canh Bí Đỏ Tôm Khô",
-    "Ingredients": ["bí đỏ", "tôm khô", "hành lá", "nước mắm", "muối", "nước"],
-    "Instructions": "1. Ngâm tôm khô nước ấm 15 phút cho mềm, vớt ra. 2. Bí đỏ gọt vỏ, thái miếng vừa ăn. 3. Đun sôi nước, cho tôm khô vào hầm 5 phút lấy vị ngọt. 4. Thêm bí đỏ vào nấu đến khi mềm (khoảng 15 phút). 5. Nêm nước mắm, muối và rắc hành lá lên trên.",
-    "ImageURL": "https://images.unsplash.com/photo-1476718406336-bb5a9690ee2a?w=600&q=80"
-  },
-  {
-    "RecipeID": "R09",
-    "Name": "Cá Kho Tộ",
-    "Ingredients": ["cá basa", "nước mắm", "đường", "tiêu", "ớt", "hành tím", "nước dừa"],
-    "Instructions": "1. Cá basa rửa sạch, thái khúc, ướp nước mắm, đường, tiêu, ớt 20 phút. 2. Thắng đường cùng một chút dầu ăn đến vàng cánh gián. 3. Xếp cá vào nồi đất (tộ), đổ nước dừa vừa ngập. 4. Thêm hành tím cắt đôi xung quanh. 5. Kho lửa nhỏ 25–30 phút đến khi nước cạn và cá thấm đều gia vị.",
-    "ImageURL": "https://images.unsplash.com/photo-1559847844-5315695dadae?w=600&q=80"
-  },
-  {
-    "RecipeID": "R10",
-    "Name": "Phở Bò Tái",
-    "Ingredients": ["bánh phở", "thịt bò", "xương bò", "gừng", "hành tây", "hoa hồi", "quế", "nước mắm"],
-    "Instructions": "1. Nướng gừng và hành tây trực tiếp trên lửa đến khi thơm. 2. Hầm xương bò với gừng, hành tây, hoa hồi, quế ít nhất 4 tiếng. 3. Lọc lấy nước dùng trong, nêm nước mắm và muối. 4. Trần bánh phở trong nước sôi, cho vào tô. 5. Xếp thịt bò thái mỏng lên, chan nước dùng sôi bỏng.",
-    "ImageURL": "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=600&q=80"
+    "Name": "Salad đậu gà và rau củ",
+    "Ingredients": [
+      "đậu gà",
+      "xà lách",
+      "dưa leo",
+      "cà chua",
+      "chanh",
+      "dầu ô liu"
+    ],
+    "Instructions": [
+      "Rửa sạch và cắt nhỏ rau củ.",
+      "Để ráo đậu gà đã nấu chín.",
+      "Trộn nước cốt chanh với dầu ô liu.",
+      "Trộn đều các nguyên liệu ngay trước khi ăn."
+    ],
+    "ImageURL": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&q=80",
+    "CookingTimeMinutes": 15,
+    "EstimatedCostVND": 30000,
+    "Servings": 2,
+    "MoodTags": [
+      "fresh",
+      "light"
+    ],
+    "HealthTags": [
+      "controlled_carb",
+      "low_saturated_fat",
+      "light"
+    ],
+    "DietTags": [
+      "vegetarian",
+      "vegan"
+    ],
+    "Allergens": [],
+    "Nutrition": {
+      "CaloriesKcal": 240,
+      "ProteinG": 9,
+      "CarbsG": 32,
+      "FatG": 9,
+      "SaturatedFatG": 1.2,
+      "SodiumMg": 170
+    },
+    "Notes": "Cần xác minh thành phần đậu gà đóng hộp nếu sử dụng."
   }
 ]
