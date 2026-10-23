@@ -2,27 +2,27 @@
   "Version": "2012-10-17",
   "Statement": [
     {
-      "Sid": "AllowDynamoDBRecipesTableReadOnly",
+      "Sid": "ReadMealRecipesTable",
       "Effect": "Allow",
       "Action": [
         "dynamodb:Scan",
-        "dynamodb:Query",
-        "dynamodb:GetItem"
+        "dynamodb:GetItem",
+        "dynamodb:Query"
       ],
       "Resource": [
-        "arn:aws:dynamodb:ap-southeast-1:*:table/RecipesTable",
-        "arn:aws:dynamodb:ap-southeast-1:*:table/RecipesTable/index/*"
+        "arn:aws:dynamodb:ap-southeast-1:*:table/MealRecipesTable",
+        "arn:aws:dynamodb:ap-southeast-1:*:table/MealRecipesTable/index/*"
       ]
     },
     {
-      "Sid": "AllowCloudWatchLogsWrite",
+      "Sid": "WriteLambdaLogs",
       "Effect": "Allow",
       "Action": [
         "logs:CreateLogGroup",
         "logs:CreateLogStream",
         "logs:PutLogEvents"
       ],
-      "Resource": "arn:aws:logs:ap-southeast-1:*:log-group:/aws/lambda/*:*"
+      "Resource": "arn:aws:logs:ap-southeast-1:*:log-group:/aws/lambda/*"
     }
   ]
 }
