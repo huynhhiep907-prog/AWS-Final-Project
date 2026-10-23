@@ -22,7 +22,7 @@
         "logs:CreateLogStream",
         "logs:PutLogEvents"
       ],
-      "Resource": "arn:aws:logs:ap-southeast-1:*:log-group:/aws/lambda/*"
+      "Resource": "arn:aws:logs:ap-southeast-1:*:log-group:/aws/lambda/*:*"
     }
   ]
 }
