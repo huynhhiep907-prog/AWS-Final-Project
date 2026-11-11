@@ -65,6 +65,36 @@
       <button id="checkoutBtn" type="submit" class="rounded-xl bg-rose-600 px-5 py-3 font-bold text-white hover:bg-rose-700 sm:col-span-2">Đặt hàng</button>
     </form>
     <div id="orderMessage" role="status" aria-live="polite" class="mt-4 hidden rounded-xl border border-green-200 bg-green-50 p-4 text-sm text-green-800"></div>
+    <div class="mt-6 border-t border-slate-100 pt-5">
+      <h3 class="text-lg font-extrabold">📦 Tra cứu đơn hàng</h3>
+      <p class="mt-1 text-sm text-slate-500">
+        Nhập mã đơn hàng để xem trạng thái giao hàng của bạn.
+      </p>
+
+      <form id="trackingForm" class="mt-4 flex flex-col gap-3 sm:flex-row">
+        <input
+          id="trackingOrderId"
+          type="text
+          required
+          placeholder="Ví dụ: BTM-BD404C4867"
+          class="min-w-0 flex-1 rounded-xl border border-slate-200 px-4 py-3 outline-none focus:border-rose-400"
+        >
+        <button
+          id="trackingBtn"
+          type="submit"
+          class="rounded-xl bg-slate-800 px-5 py-3 font-bold text-white hover:bg-slate-700"
+        >
+          Tra cứu đơn
+        </button>
+      </form>
+      
+      <div
+        id="trackingResult"
+        role="status"
+        aria-live="polite"
+        class="mt-4 hidden rounded-xl border p-4 text-sm"
+      ></div>
+    </div>
     <p class="mt-3 text-xs text-slate-400">Đơn hàng sẽ được gửi đến API trên AWS và lưu vào DynamoDB. Phương thức thanh toán hiện tại là COD; website chưa xử lý thanh toán trực tuyến.</p>
   </section>
   <section class="mt-6 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm leading-relaxed text-amber-900"><strong>Lưu ý bản thử nghiệm:</strong> Menu và giá hiện là dữ liệu minh họa. Hệ thống đã lưu đơn hàng trên AWS, nhưng chưa kết nối nhà hàng đối tác hoặc GrabFood/ShopeeFood.</section>
