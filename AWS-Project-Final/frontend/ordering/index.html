@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Khám phá món ăn và tìm gợi ý đặt đồ ăn phù hợp với bạn.">
+  <title>Đặt đồ ăn — Bếp Thông Minh</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { background: linear-gradient(135deg,#fff7ed 0%,#fff 55%,#fff1f2 100%); }
+    .dish-card { transition: transform .18s ease, box-shadow .18s ease; }
+    .dish-card:hover { transform: translateY(-3px); box-shadow: 0 14px 30px rgba(15,23,42,.10); }
+  </style>
+</head>
+<body class="min-h-screen font-sans text-slate-800">
+  <header class="bg-gradient-to-r from-rose-500 to-orange-500 text-white shadow-lg">
+    <div class="max-w-6xl mx-auto px-4 py-5 flex flex-wrap items-center gap-3">
+      <a href="../index.html" class="rounded-lg bg-white/15 px-3 py-2 text-sm font-semibold hover:bg-white/25">← Trang chủ</a>
+      <div>
+        <p class="text-xl font-extrabold">🍱 Bếp Thông Minh · Đặt đồ ăn</p>
+        <p class="text-rose-50 text-sm">Khám phá món ngon, chọn món phù hợp với bạn.</p>
+      </div>
+      <span class="ml-auto rounded-full border border-white/40 bg-white/15 px-3 py-1 text-xs font-bold">FOOD ORDERING</span>
+    </div>
+  </header>
+  <main class="max-w-6xl mx-auto px-4 py-8">
+    <section class="rounded-2xl border border-rose-100 bg-white/95 p-6 shadow-sm sm:p-8">
+      <p class="text-sm font-bold uppercase tracking-wider text-rose-600">Bạn muốn ăn gì hôm nay?</p>
+      <h1 class="mt-2 text-2xl font-extrabold sm:text-3xl">Để Bếp Thông Minh giúp bạn chọn món</h1>
+      <p class="mt-2 max-w-2xl text-slate-600">Khu vực này dành riêng cho người muốn đặt đồ ăn, không cần tìm nguyên liệu hay xem hướng dẫn nấu.</p>
+      <div class="mt-6 grid gap-4 sm:grid-cols-3">
+        <article class="rounded-xl bg-rose-50 p-4"><div class="text-2xl">💰</div><h2 class="mt-2 font-bold">Theo ngân sách</h2><p class="mt-1 text-sm text-slate-600">Tìm món phù hợp số tiền bạn dự định chi.</p></article>
+        <article class="rounded-xl bg-orange-50 p-4"><div class="text-2xl">🍜</div><h2 class="mt-2 font-bold">Theo khẩu vị</h2><p class="mt-1 text-sm text-slate-600">Chọn món nước, cơm, món chay, cay hoặc thanh nhẹ.</p></article>
+        <article class="rounded-xl bg-amber-50 p-4"><div class="text-2xl">🎲</div><h2 class="mt-2 font-bold">Gợi ý ngẫu nhiên</h2><p class="mt-1 text-sm text-slate-600">Khi bạn chưa biết hôm nay nên ăn gì.</p></article>
+      </div>
+      <div class="mt-6 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm leading-relaxed text-amber-900">
+        <strong>Giai đoạn hiện tại:</strong> Đây là giao diện nền ban đầu. Danh sách món, bộ lọc, dữ liệu nhà hàng và liên kết đặt món sẽ được xây dựng ở bước tiếp theo. Chưa kết nối GrabFood hoặc ShopeeFood; giá và tình trạng món chưa phải dữ liệu trực tiếp.
+      </div>
+    </section>
+    <div class="mt-6 flex flex-wrap gap-3">
+      <a href="../cooking/index.html" class="rounded-xl border border-slate-300 bg-white px-5 py-3 font-semibold text-slate-700 hover:bg-slate-50">🥗 Chuyển sang khu vực nấu ăn</a>
+      <a href="../index.html" class="rounded-xl bg-slate-800 px-5 py-3 font-semibold text-white hover:bg-slate-700">Về trang chọn chức năng</a>
+    </div>
+  </main>
+  <footer class="py-6 text-center text-xs text-slate-400">Bếp Thông Minh · Khu vực đặt đồ ăn</footer>
+</body>
+</html>
