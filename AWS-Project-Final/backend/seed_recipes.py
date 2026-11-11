@@ -9,6 +9,7 @@ Install dependency: python -m pip install boto3
 import argparse
 import json
 from pathlib import Path
+from decimal import Decimal
 
 import boto3
 from botocore.exceptions import ClientError
@@ -26,7 +27,7 @@ def main():
         raise SystemExit(f"Không tìm thấy file dữ liệu: {path}")
 
     with path.open("r", encoding="utf-8") as handle:
-        recipes = json.load(handle)
+        recipes = json.load(handle, parse_float=Decimal)
     if not isinstance(recipes, list):
         raise SystemExit("seed_data.json phải chứa một JSON array.")
     if any(not isinstance(item, dict) or not item.get("RecipeID") for item in recipes):
