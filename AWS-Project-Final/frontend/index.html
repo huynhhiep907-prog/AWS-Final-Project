@@ -3,497 +3,60 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Gợi ý món ăn theo nguyên liệu, sở thích và các tiêu chí dinh dưỡng tham khảo.">
-  <title>Bếp Thông Minh — Gợi ý món ăn</title>
+  <meta name="description" content="Bếp Thông Minh — chọn trải nghiệm nấu ăn tại nhà hoặc khám phá món để đặt.">
+  <title>Bếp Thông Minh — Bạn muốn làm gì hôm nay?</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    :root { color-scheme: light; }
-    body { background: linear-gradient(135deg, #fff7ed 0%, #ffffff 48%, #ecfdf5 100%); }
-    .recipe-card { transition: transform .18s ease, box-shadow .18s ease; }
-    .recipe-card:hover { transform: translateY(-3px); box-shadow: 0 14px 30px rgba(15, 23, 42, .10); }
-    .ingredient-tag { display:inline-block; margin:2px; padding:3px 9px; border-radius:999px; background:#fff7ed; color:#9a3412; border:1px solid #fed7aa; font-size:.75rem; }
-    .filter-label { display:block; font-size:.85rem; font-weight:700; color:#334155; margin-bottom:6px; }
-    .filter-control { width:100%; border:1px solid #cbd5e1; border-radius:10px; padding:10px 12px; background:white; color:#0f172a; font-size:.9rem; }
-    .filter-control:focus { outline:2px solid #fdba74; border-color:#f97316; }
-    .status { border-radius:12px; padding:12px 14px; font-size:.9rem; margin-bottom:20px; }
-    .status-info { background:#eff6ff; border:1px solid #bfdbfe; color:#1d4ed8; }
-    .status-success { background:#f0fdf4; border:1px solid #bbf7d0; color:#166534; }
-    .status-warning { background:#fffbeb; border:1px solid #fde68a; color:#92400e; }
-    .status-error { background:#fef2f2; border:1px solid #fecaca; color:#991b1b; }
-    .spinner { display:inline-block; width:16px; height:16px; border:3px solid #fed7aa; border-top-color:#ea580c; border-radius:50%; animation:spin .7s linear infinite; vertical-align:middle; margin-right:8px; }
-    @keyframes spin { to { transform:rotate(360deg); } }
-    .modal-overlay { display:none; position:fixed; inset:0; z-index:50; background:rgba(15,23,42,.65); padding:16px; align-items:center; justify-content:center; }
-    .modal-overlay.active { display:flex; }
-    .modal-panel { max-height:90vh; overflow:auto; }
-    button:disabled { opacity:.55; cursor:not-allowed; }
+    body { background: linear-gradient(135deg,#fff7ed 0%,#fff 50%,#ecfdf5 100%); }
+    .choice-card { transition: transform .2s ease, box-shadow .2s ease; }
+    .choice-card:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(15,23,42,.12); }
+    .choice-card:focus-visible { outline: 3px solid #f97316; outline-offset: 4px; }
   </style>
 </head>
 <body class="min-h-screen font-sans text-slate-800">
-  <header class="bg-gradient-to-r from-orange-500 to-emerald-600 text-white shadow-lg">
-    <div class="max-w-6xl mx-auto px-4 py-6 flex flex-col sm:flex-row gap-3 sm:items-center">
-      <div class="text-4xl" aria-hidden="true">🥗</div>
-      <div>
-        <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Bếp Thông Minh</h1>
-        <p class="text-orange-50 text-sm mt-1">Tận dụng nguyên liệu sẵn có, tìm món phù hợp với nhu cầu của bạn.</p>
-      </div>
-      <div class="sm:ml-auto self-start sm:self-center rounded-full border border-white/40 bg-white/15 px-3 py-1 text-xs font-bold">AWS Serverless · Demo</div>
+  <header class="border-b border-white/70 bg-white/70 backdrop-blur">
+    <div class="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-5">
+      <a href="./index.html" class="flex items-center gap-3" aria-label="Bếp Thông Minh - Trang chủ">
+        <span class="text-3xl" aria-hidden="true">🍳</span>
+        <span><span class="block text-xl font-extrabold tracking-tight">Bếp Thông Minh</span><span class="block text-xs text-slate-500">Smart Kitchen</span></span>
+      </a>
+      <span class="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-bold text-emerald-700">AWS Serverless · Demo</span>
     </div>
   </header>
-
-  <main class="max-w-6xl mx-auto px-4 py-7 sm:py-9">
-    <section class="bg-white/95 rounded-2xl shadow-sm border border-orange-100 p-5 sm:p-7 mb-6">
-      <div class="mb-5">
-        <h2 class="text-xl font-extrabold">Tìm món ăn dành cho bạn</h2>
-        <p class="text-sm text-slate-500 mt-1">Điền một hoặc nhiều tiêu chí. Nếu nhập nguyên liệu, món có nhiều nguyên liệu khớp hơn sẽ được ưu tiên.</p>
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div class="md:col-span-2">
-          <label class="filter-label" for="ingredients">🧅 Nguyên liệu đang có (phân cách bằng dấu phẩy)</label>
-          <input id="ingredients" class="filter-control" maxlength="200" placeholder="Ví dụ: trứng, cà chua, đậu hũ">
-        </div>
-        <div>
-          <label class="filter-label" for="health">🎯 Tiêu chí sức khỏe / dinh dưỡng</label>
-          <select id="health" class="filter-control">
-            <option value="">Không lọc</option>
-            <option value="low_sodium">Hạn chế natri</option>
-            <option value="controlled_carb">Kiểm soát lượng tinh bột</option>
-            <option value="low_saturated_fat">Ít chất béo bão hòa</option>
-            <option value="light">Món nhẹ</option>
-          </select>
-        </div>
-        <div>
-          <label class="filter-label" for="need">🍽️ Nhu cầu ăn uống</label>
-          <select id="need" class="filter-control">
-            <option value="">Không lọc</option>
-            <option value="high_protein">Ưu tiên đạm</option>
-            <option value="vegetarian">Ăn chay có trứng/sữa</option>
-            <option value="vegan">Thuần thực vật</option>
-            <option value="low_calorie">Ít năng lượng (tham khảo)</option>
-          </select>
-        </div>
-        <div>
-          <label class="filter-label" for="mood">🙂 Tâm trạng / khẩu vị</label>
-          <select id="mood" class="filter-control">
-            <option value="">Không lọc</option>
-            <option value="comforting">Muốn món ấm bụng, quen thuộc</option>
-            <option value="fresh">Muốn món thanh, tươi</option>
-            <option value="energizing">Muốn món giàu năng lượng</option>
-            <option value="light">Muốn món nhẹ nhàng</option>
-          </select>
-        </div>
-        <div>
-          <label class="filter-label" for="maxTime">⏱️ Thời gian nấu tối đa</label>
-          <select id="maxTime" class="filter-control">
-            <option value="">Không giới hạn</option>
-            <option value="15">15 phút</option>
-            <option value="30">30 phút</option>
-            <option value="45">45 phút</option>
-            <option value="60">60 phút</option>
-          </select>
-        </div>
-        <div>
-          <label class="filter-label" for="maxBudget">💰 Ngân sách tối đa / khẩu phần (VNĐ)</label>
-          <input id="maxBudget" class="filter-control" type="number" min="0" max="10000000" step="1000" placeholder="Ví dụ: 30000">
-        </div>
-        <div>
-          <label class="filter-label" for="allergies">🚫 Dị ứng cần tránh (phân cách bằng dấu phẩy)</label>
-          <input id="allergies" class="filter-control" maxlength="200" placeholder="Ví dụ: tôm, trứng, đậu nành">
-        </div>
-        <div>
-          <label class="filter-label" for="avoid">🩺 Nguyên liệu cần tránh theo chỉ định</label>
-          <input id="avoid" class="filter-control" maxlength="200" placeholder="Ví dụ: nước mắm, thịt heo">
-        </div>
-        <div>
-          <label class="filter-label" for="maxSodium">Natri tối đa / khẩu phần (mg, tùy chọn)</label>
-          <input id="maxSodium" class="filter-control" type="number" min="0" max="100000" step="50" placeholder="Ví dụ: 500">
-        </div>
-        <div>
-          <label class="filter-label" for="maxCarbs">Carbohydrate tối đa / khẩu phần (g, tùy chọn)</label>
-          <input id="maxCarbs" class="filter-control" type="number" min="0" max="1000" step="1" placeholder="Ví dụ: 40">
-        </div>
-      </div>
-      <div class="mt-5 rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs leading-relaxed text-amber-900">
-        <strong>Lưu ý sức khỏe:</strong> Đây là bộ lọc minh họa cho dự án, không phải tư vấn hoặc chẩn đoán y tế. Dữ liệu dinh dưỡng và chi phí chỉ là ước tính, có thể không chính xác. Nếu bác sĩ đã chỉ định chế độ ăn, hãy nhập các giới hạn cụ thể và xác nhận với bác sĩ/chuyên gia dinh dưỡng trước khi sử dụng.
-      </div>
-      <div class="mt-5 flex flex-col sm:flex-row gap-3">
-        <button id="search-btn" class="rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold px-5 py-3 shadow-sm transition">🔎 Tìm món phù hợp</button>
-        <button id="random-btn" class="rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-5 py-3 shadow-sm transition">🎲 Gợi ý ngẫu nhiên</button>
-        <button id="reset-btn" class="rounded-xl border border-slate-300 hover:bg-slate-50 text-slate-700 font-semibold px-5 py-3 transition">Xóa bộ lọc</button>
-      </div>
+  <main class="mx-auto flex max-w-6xl flex-col px-4 py-12 sm:py-16">
+    <section class="mx-auto max-w-2xl text-center">
+      <p class="text-sm font-bold uppercase tracking-[.18em] text-orange-600">Chào mừng bạn đến với Bếp Thông Minh</p>
+      <h1 class="mt-4 text-3xl font-black leading-tight tracking-tight sm:text-5xl">Hôm nay bạn muốn <span class="text-orange-600">ăn theo cách nào?</span></h1>
+      <p class="mt-4 text-base leading-relaxed text-slate-600 sm:text-lg">Chọn một trải nghiệm để bắt đầu. Mỗi khu vực có giao diện và chức năng riêng, phù hợp với nhu cầu của bạn.</p>
     </section>
-
-    <div id="status" class="hidden status status-info" role="status" aria-live="polite"></div>
-    <section>
-      <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
-        <h2 class="text-lg font-extrabold">🍲 Gợi ý món ăn <span id="result-count" class="text-orange-600"></span></h2>
-        <span id="source-badge" class="text-xs font-bold rounded-full px-3 py-1 bg-slate-100 text-slate-600">Chưa tìm kiếm</span>
-      </div>
-      <div id="results-grid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5"></div>
-      <div id="empty-state" class="hidden text-center rounded-2xl border border-dashed border-slate-300 bg-white/70 px-5 py-14">
-        <div class="text-5xl mb-3" aria-hidden="true">🥺</div>
-        <p class="font-bold text-slate-700">Chưa tìm thấy món phù hợp.</p>
-        <p class="text-sm text-slate-500 mt-1">Thử nới lỏng một tiêu chí hoặc thay đổi nguyên liệu.</p>
-      </div>
+    <section class="mt-10 grid gap-6 md:grid-cols-2" aria-label="Chọn chức năng">
+      <a class="choice-card group overflow-hidden rounded-3xl border border-emerald-100 bg-white shadow-lg shadow-emerald-900/5" href="./cooking/index.html">
+        <div class="relative">
+          <img class="h-56 w-full object-cover sm:h-72" src="https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=1200&q=85" alt="Nguyên liệu tươi và chuẩn bị nấu ăn" onerror="this.style.display='none'">
+          <div class="absolute inset-0 bg-gradient-to-t from-emerald-950/75 via-transparent to-transparent"></div>
+          <span class="absolute bottom-4 left-5 rounded-full bg-emerald-500 px-3 py-1 text-xs font-extrabold tracking-wider text-white">COOKING</span>
+        </div>
+        <div class="p-6 sm:p-7">
+          <div class="flex items-center justify-between gap-3"><h2 class="text-2xl font-extrabold">🥗 Tôi muốn nấu ăn</h2><span class="text-2xl text-emerald-600 transition group-hover:translate-x-1">→</span></div>
+          <p class="mt-3 leading-relaxed text-slate-600">Tìm món từ nguyên liệu có sẵn, khám phá công thức cookbook, xem hướng dẫn từng bước và lên kế hoạch bữa ăn.</p>
+          <span class="mt-5 inline-flex rounded-xl bg-emerald-600 px-5 py-3 font-bold text-white group-hover:bg-emerald-700">Khám phá khu vực nấu ăn</span>
+        </div>
+      </a>
+      <a class="choice-card group overflow-hidden rounded-3xl border border-rose-100 bg-white shadow-lg shadow-rose-900/5" href="./ordering/index.html">
+        <div class="relative">
+          <img class="h-56 w-full object-cover sm:h-72" src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c" alt="Các món ăn ngon sẵn sàng thưởng thức" onerror="this.style.display='none'">
+          <div class="absolute inset-0 bg-gradient-to-t from-rose-950/75 via-transparent to-transparent"></div>
+          <span class="absolute bottom-4 left-5 rounded-full bg-rose-500 px-3 py-1 text-xs font-extrabold tracking-wider text-white">FOOD ORDERING</span>
+        </div>
+        <div class="p-6 sm:p-7">
+          <div class="flex items-center justify-between gap-3"><h2 class="text-2xl font-extrabold">🍱 Tôi muốn đặt đồ ăn</h2><span class="text-2xl text-rose-600 transition group-hover:translate-x-1">→</span></div>
+          <p class="mt-3 leading-relaxed text-slate-600">Khám phá món ăn, tìm gợi ý theo ngân sách và khẩu vị, chọn món phù hợp khi bạn không muốn vào bếp.</p>
+          <span class="mt-5 inline-flex rounded-xl bg-rose-500 px-5 py-3 font-bold text-white group-hover:bg-rose-600">Khám phá khu vực đặt đồ ăn</span>
+        </div>
+      </a>
     </section>
+    <p class="mt-8 text-center text-sm text-slate-500">Bạn có thể quay lại trang này bất cứ lúc nào để chuyển đổi giữa hai khu vực.</p>
   </main>
-
-  <div id="recipe-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-    <div class="modal-panel bg-white rounded-2xl shadow-2xl w-full max-w-2xl">
-      <div class="flex items-start gap-4 p-5 border-b border-slate-100">
-        <div class="min-w-0 flex-1">
-          <h2 id="modal-title" class="text-xl font-extrabold"></h2>
-          <p id="modal-meta" class="text-sm text-slate-500 mt-1"></p>
-        </div>
-        <button id="modal-close" class="rounded-lg border border-slate-200 px-3 py-2 hover:bg-slate-50" aria-label="Đóng">✕</button>
-      </div>
-      <div class="p-5">
-        <img id="modal-image" class="w-full h-48 object-cover rounded-xl bg-orange-50 mb-5" alt="">
-        <p id="modal-description" class="text-sm leading-relaxed text-slate-600 mb-5"></p>
-        <div id="modal-overview" class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-6"></div>
-        <section class="mb-6">
-          <h3 class="font-bold text-slate-800 mb-2">🧺 Nguyên liệu và định lượng</h3>
-          <div id="modal-ingredients" class="space-y-2"></div>
-        </section>
-        <section class="mb-6">
-          <h3 class="font-bold text-slate-800 mb-2">🔪 Chuẩn bị trước khi nấu</h3>
-          <ul id="modal-preparation" class="list-disc list-inside space-y-2 text-sm leading-relaxed text-slate-700"></ul>
-        </section>
-        <section class="mb-6">
-          <h3 class="font-bold text-slate-800 mb-2">👨‍🍳 Các bước chế biến</h3>
-          <div id="modal-cooking-steps" class="space-y-4"></div>
-          <ol id="modal-instructions" class="list-decimal list-inside space-y-2 text-sm leading-relaxed text-slate-700"></ol>
-        </section>
-        <section class="mb-6">
-          <h3 class="font-bold text-slate-800 mb-2">💡 Bí quyết đầu bếp</h3>
-          <ul id="modal-tips" class="list-disc list-inside space-y-1 text-sm text-slate-700"></ul>
-        </section>
-        <section class="mb-6">
-          <h3 class="font-bold text-slate-800 mb-2">⚠️ Lỗi thường gặp</h3>
-          <div id="modal-mistakes" class="space-y-2"></div>
-        </section>
-        <section class="mb-6">
-          <h3 class="font-bold text-slate-800 mb-2">🔄 Nguyên liệu thay thế</h3>
-          <div id="modal-substitutions" class="text-sm text-slate-700 space-y-1"></div>
-        </section>
-        <section class="mb-6">
-          <h3 class="font-bold text-slate-800 mb-2">📊 Dinh dưỡng ước tính / khẩu phần</h3>
-          <div id="modal-nutrition" class="grid grid-cols-2 sm:grid-cols-4 gap-2"></div>
-        </section>
-        <section class="grid sm:grid-cols-2 gap-4 mb-5">
-          <div><h3 class="font-bold text-slate-800 mb-1">❄️ Bảo quản</h3><p id="modal-storage" class="text-sm text-slate-600"></p></div>
-          <div><h3 class="font-bold text-slate-800 mb-1">♨️ Hâm nóng</h3><p id="modal-reheating" class="text-sm text-slate-600"></p></div>
-        </section>
-        <p id="modal-notes" class="text-xs text-slate-500 mt-5"></p>
-      </div>
-    </div>
-  </div>
-
-  <footer class="text-center text-xs text-slate-400 px-4 py-6">
-    Bếp Thông Minh · Amazon S3 · API Gateway · AWS Lambda · Amazon DynamoDB
-  </footer>
-
-  <script>
-    // Sau khi tạo API Gateway, dán URL đầy đủ bao gồm route, ví dụ:
-    // https://abc123.execute-api.ap-southeast-1.amazonaws.com/recipes/recommend
-    const API_URL = "https://yvywwi6zp6.execute-api.ap-southeast-1.amazonaws.com/prod/recipes";
-
-    // Dữ liệu mẫu giúp giao diện chạy được trước khi triển khai AWS.
-    // Khi API_URL có giá trị, ứng dụng sẽ truy vấn DynamoDB qua Lambda.
-    const MOCK_DATA = [
-      { RecipeID:"R01", Name:"Trứng đúc thịt", Ingredients:["trứng","thịt heo xay","hành lá","nước mắm","tiêu","dầu ăn"], Instructions:["Trộn trứng với thịt heo xay, hành lá thái nhỏ và gia vị.","Làm nóng chảo với một ít dầu.","Đổ hỗn hợp vào chảo, đậy nắp và nấu chín khoảng 10–12 phút.","Kiểm tra thịt và trứng đã chín hoàn toàn rồi dùng nóng."], ImageURL:"https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=600&q=80", CookingTimeMinutes:20, EstimatedCostVND:28000, Servings:2, MoodTags:["comforting","energizing"], HealthTags:["high_protein"], DietTags:[], Allergens:["trứng"], Nutrition:{CaloriesKcal:320,ProteinG:22,CarbsG:8,FatG:22,SaturatedFatG:7,SodiumMg:620}, Notes:"Dữ liệu dinh dưỡng và chi phí là ước tính minh họa." },
-      { RecipeID:"R02", Name:"Đậu hũ sốt cà chua", Ingredients:["đậu hũ","cà chua","hành tím","tỏi","nước tương","dầu ăn"], Instructions:["Cắt đậu hũ thành miếng vừa ăn.","Phi thơm hành tím và tỏi với ít dầu.","Cho cà chua vào nấu mềm, thêm một ít nước nếu cần.","Cho đậu hũ và nước tương vào, rim nhỏ lửa 5–7 phút."], ImageURL:"https://images.unsplash.com/photo-1511690743698-d9d85f2fbf38?w=600&q=80", CookingTimeMinutes:20, EstimatedCostVND:22000, Servings:2, MoodTags:["fresh","light"], HealthTags:["low_sodium","controlled_carb","low_saturated_fat","light"], DietTags:["vegetarian","vegan","low_calorie"], Allergens:["đậu nành"], Nutrition:{CaloriesKcal:210,ProteinG:12,CarbsG:18,FatG:10,SaturatedFatG:1.5,SodiumMg:380}, Notes:"Chọn nước tương ít natri nếu cần hạn chế natri." },
-      { RecipeID:"R03", Name:"Canh cà chua trứng", Ingredients:["cà chua","trứng","hành lá","nước","muối"], Instructions:["Đun sôi khoảng 500 ml nước.","Cho cà chua thái múi cau vào nấu mềm.","Đánh tan trứng, rót từ từ vào nồi và khuấy nhẹ.","Nêm gia vị vừa phải, rắc hành lá rồi tắt bếp."], ImageURL:"https://images.unsplash.com/photo-1547592180-85f173990554?w=600&q=80", CookingTimeMinutes:15, EstimatedCostVND:18000, Servings:2, MoodTags:["light","fresh"], HealthTags:["low_sodium","controlled_carb","light"], DietTags:["vegetarian","low_calorie"], Allergens:["trứng"], Nutrition:{CaloriesKcal:125,ProteinG:8,CarbsG:9,FatG:6,SaturatedFatG:2,SodiumMg:390}, Notes:"Điều chỉnh lượng muối theo nhu cầu cá nhân." },
-      { RecipeID:"R05", Name:"Rau muống xào tỏi", Ingredients:["rau muống","tỏi","dầu ăn","nước tương"], Instructions:["Nhặt, rửa sạch rau muống và để ráo.","Phi thơm tỏi với một ít dầu.","Cho rau vào xào nhanh trên lửa lớn đến khi chín.","Nêm một lượng nhỏ nước tương rồi dùng ngay."], ImageURL:"https://images.unsplash.com/photo-1540420773420-3366772f4999?w=600&q=80", CookingTimeMinutes:12, EstimatedCostVND:15000, Servings:2, MoodTags:["fresh","light"], HealthTags:["low_sodium","controlled_carb","low_saturated_fat","light"], DietTags:["vegetarian","vegan","low_calorie"], Allergens:["đậu nành"], Nutrition:{CaloriesKcal:95,ProteinG:4,CarbsG:8,FatG:6,SaturatedFatG:1,SodiumMg:280}, Notes:"Có thể giảm hoặc bỏ nước tương để giảm natri." },
-      { RecipeID:"R06", Name:"Gà kho gừng", Ingredients:["thịt gà","gừng","tỏi","hành tím","nước mắm","đường","tiêu"], Instructions:["Chặt gà thành miếng vừa ăn, rửa sạch và để ráo.","Ướp gà với gừng, tỏi, hành tím và gia vị khoảng 15 phút.","Áp chảo cho thịt săn lại, thêm ít nước.","Kho đến khi gà chín hoàn toàn và nước sốt sệt lại."], ImageURL:"https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=600&q=80", CookingTimeMinutes:35, EstimatedCostVND:32000, Servings:2, MoodTags:["comforting","energizing"], HealthTags:["high_protein","controlled_carb","low_saturated_fat"], DietTags:[], Allergens:["cá"], Nutrition:{CaloriesKcal:290,ProteinG:27,CarbsG:12,FatG:14,SaturatedFatG:3.5,SodiumMg:720}, Notes:"Nước mắm có thể làm tăng natri trong món ăn." },
-      { RecipeID:"R09", Name:"Bò xào bông cải", Ingredients:["thịt bò","bông cải xanh","tỏi","dầu ăn","nước tương"], Instructions:["Thái bò mỏng, bông cải rửa sạch và cắt miếng vừa ăn.","Chần bông cải 1–2 phút rồi để ráo.","Phi thơm tỏi, xào bò nhanh đến khi gần chín.","Cho bông cải vào đảo đều, nêm vừa ăn và nấu chín."], ImageURL:"https://images.unsplash.com/photo-1547592180-85f173990554?w=600&q=80", CookingTimeMinutes:25, EstimatedCostVND:35000, Servings:2, MoodTags:["fresh","energizing"], HealthTags:["high_protein","controlled_carb","low_saturated_fat"], DietTags:[], Allergens:["đậu nành"], Nutrition:{CaloriesKcal:275,ProteinG:25,CarbsG:14,FatG:13,SaturatedFatG:4,SodiumMg:560}, Notes:"Dùng nước tương vừa phải; giá trị dinh dưỡng là ước tính." }
-    ];
-
-    const $ = function(id) { return document.getElementById(id); };
-    function normalize(value) {
-      return String(value || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").trim();
-    }
-    function csv(value) { return String(value || "").split(",").map(function(x) { return x.trim(); }).filter(Boolean).slice(0, 10); }
-    function collectFilters() {
-      return {
-        ingredients: csv($("ingredients").value),
-        health: $("health").value,
-        need: $("need").value,
-        mood: $("mood").value,
-        allergies: csv($("allergies").value),
-        avoid: csv($("avoid").value),
-        maxTime: $("maxTime").value,
-        maxBudget: $("maxBudget").value,
-        maxSodium: $("maxSodium").value,
-        maxCarbs: $("maxCarbs").value
-      };
-    }
-    function hasFilters(f) {
-      return f.ingredients.length || f.health || f.need || f.mood || f.allergies.length || f.avoid.length || f.maxTime || f.maxBudget || f.maxSodium || f.maxCarbs;
-    }
-    function arrayOf(value) { return Array.isArray(value) ? value : (value ? String(value).split(",").map(function(x) { return x.trim(); }) : []); }
-    function includesAny(haystack, needles) {
-      const normalizedHaystack = haystack.map(normalize);
-      return needles.some(function(needle) {
-        const n = normalize(needle);
-        return normalizedHaystack.some(function(item) { return item.includes(n) || n.includes(item); });
-      });
-    }
-    function matchesRecipe(recipe, f) {
-      const ingredients = arrayOf(recipe.Ingredients);
-      const healthTags = arrayOf(recipe.HealthTags);
-      const dietTags = arrayOf(recipe.DietTags);
-      const moodTags = arrayOf(recipe.MoodTags);
-      const allergens = arrayOf(recipe.Allergens);
-      if (f.ingredients.length && !includesAny(ingredients, f.ingredients)) return false;
-      if (f.health && healthTags.indexOf(f.health) === -1) return false;
-      if (f.need && healthTags.indexOf(f.need) === -1 && dietTags.indexOf(f.need) === -1) return false;
-      if (f.mood && moodTags.indexOf(f.mood) === -1) return false;
-      if (f.allergies.length && (includesAny(ingredients, f.allergies) || includesAny(allergens, f.allergies))) return false;
-      if (f.avoid.length && includesAny(ingredients, f.avoid)) return false;
-      const nutrition = recipe.Nutrition || {};
-      if (f.maxTime && Number(recipe.CookingTimeMinutes || 9999) > Number(f.maxTime)) return false;
-      if (f.maxBudget && Number(recipe.EstimatedCostVND || 999999999) > Number(f.maxBudget)) return false;
-      if (f.maxSodium && (nutrition.SodiumMg === undefined || Number(nutrition.SodiumMg) > Number(f.maxSodium))) return false;
-      if (f.maxCarbs && (nutrition.CarbsG === undefined || Number(nutrition.CarbsG) > Number(f.maxCarbs))) return false;
-      return true;
-    }
-    function filterMockData(f) {
-      const results = MOCK_DATA.filter(function(recipe) { return matchesRecipe(recipe, f); });
-      return results.sort(function(a, b) {
-        const score = function(recipe) {
-          const ings = arrayOf(recipe.Ingredients).map(normalize);
-          return f.ingredients.filter(function(k) { return ings.some(function(i) { return i.includes(normalize(k)); }); }).length;
-        };
-        return score(b) - score(a);
-      });
-    }
-    function showStatus(message, type) {
-      const el = $("status");
-      el.className = "status status-" + (type || "info");
-      el.textContent = message;
-      el.classList.remove("hidden");
-    }
-    function setLoading(loading) {
-      $("search-btn").disabled = loading;
-      $("random-btn").disabled = loading;
-      $("reset-btn").disabled = loading;
-      if (loading) {
-        $("status").className = "status status-info";
-        $("status").textContent = "Đang tìm món phù hợp...";
-        const spinner = document.createElement("span");
-        spinner.className = "spinner";
-        spinner.setAttribute("aria-hidden", "true");
-        $("status").prepend(spinner);
-      }
-    }
-    function addText(parent, tag, text, className) {
-      const el = document.createElement(tag);
-      el.textContent = text;
-      if (className) el.className = className;
-      parent.appendChild(el);
-      return el;
-    }
-    function addTagList(parent, values) {
-      values.forEach(function(value) {
-        const tag = document.createElement("span");
-        tag.className = "ingredient-tag";
-        tag.textContent = value;
-        parent.appendChild(tag);
-      });
-    }
-    function renderResults(recipes, live) {
-      const grid = $("results-grid");
-      grid.replaceChildren();
-      $("result-count").textContent = recipes.length ? "(" + recipes.length + ")" : "";
-      $("source-badge").textContent = live ? "Dữ liệu từ AWS DynamoDB" : "Dữ liệu mẫu offline";
-      $("source-badge").className = live ? "text-xs font-bold rounded-full px-3 py-1 bg-emerald-100 text-emerald-800" : "text-xs font-bold rounded-full px-3 py-1 bg-amber-100 text-amber-800";
-      $("empty-state").classList.toggle("hidden", recipes.length > 0);
-      recipes.forEach(function(recipe, index) {
-        const card = document.createElement("article");
-        card.className = "recipe-card bg-white rounded-2xl overflow-hidden border border-slate-100 shadow-sm";
-        const img = document.createElement("img");
-        img.className = "w-full h-44 object-cover bg-orange-50";
-        img.src = recipe.ImageURL || "";
-        img.alt = recipe.Name || "Món ăn";
-        img.loading = "lazy";
-        img.onerror = function() { img.onerror = null; img.src = "https://images.unsplash.com/photo-1547592180-85f173990554?w=600&q=80"; };
-        card.appendChild(img);
-        const body = document.createElement("div");
-        body.className = "p-4";
-        addText(body, "p", "MÓN #" + (recipe.RecipeID || index + 1), "text-xs font-bold tracking-wide text-orange-600 mb-1");
-        addText(body, "h3", recipe.Name || "Món ăn", "text-lg font-extrabold text-slate-800");
-        const meta = document.createElement("div");
-        meta.className = "flex flex-wrap gap-2 my-3";
-        addText(meta, "span", "⏱ " + (recipe.CookingTimeMinutes || "—") + " phút", "text-xs rounded-full bg-slate-100 px-2 py-1 text-slate-600");
-        addText(meta, "span", "💰 ~" + (Number(recipe.EstimatedCostVND || 0).toLocaleString("vi-VN")) + "đ/khẩu phần", "text-xs rounded-full bg-slate-100 px-2 py-1 text-slate-600");
-        body.appendChild(meta);
-        addText(body, "p", "Nguyên liệu", "text-xs font-bold text-slate-500 mb-1");
-        const tags = document.createElement("div");
-        tags.className = "mb-3";
-        addTagList(tags, arrayOf(recipe.Ingredients));
-        body.appendChild(tags);
-        const nutrition = recipe.Nutrition || {};
-        const nutritionText = "Năng lượng ~" + (nutrition.CaloriesKcal ?? "—") + " kcal · Đạm " + (nutrition.ProteinG ?? "—") + " g · Carb " + (nutrition.CarbsG ?? "—") + " g";
-        addText(body, "p", nutritionText, "text-xs leading-relaxed text-slate-500 mb-3");
-        const button = addText(body, "button", "📖 Xem cách làm", "w-full rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold py-2.5 transition");
-        button.type = "button";
-        button.addEventListener("click", function() { openRecipe(recipe); });
-        card.appendChild(body);
-        grid.appendChild(card);
-      });
-    }
-    function renderInfoPills(container, items) {
-      container.replaceChildren();
-      items.forEach(function(item) {
-        const pill = document.createElement("div");
-        pill.className = "rounded-xl bg-orange-50 border border-orange-100 p-3 text-center";
-        addText(pill, "p", item.value, "font-extrabold text-slate-800");
-        addText(pill, "p", item.label, "text-xs text-slate-500 mt-1");
-        container.appendChild(pill);
-      });
-    }
-    function openRecipe(recipe) {
-      $("modal-title").textContent = recipe.Name || "Món ăn";
-      $("modal-meta").textContent = [recipe.Cuisine, recipe.Category, recipe.Difficulty === "easy" ? "Dễ" : recipe.Difficulty === "medium" ? "Trung bình" : recipe.Difficulty].filter(Boolean).join(" · ") + " · Chi phí ước tính " + Number(recipe.EstimatedCostVND || 0).toLocaleString("vi-VN") + "đ/khẩu phần";
-      $("modal-image").src = recipe.ImageURL || "";
-      $("modal-image").alt = recipe.Name || "Món ăn";
-      $("modal-description").textContent = recipe.Description || "Công thức món ăn gia đình.";
-      renderInfoPills($("modal-overview"), [
-        {label:"Chuẩn bị",value:(recipe.PrepTimeMinutes ?? "—") + " phút"},
-        {label:"Chế biến",value:(recipe.CookingTimeMinutes ?? "—") + " phút"},
-        {label:"Tổng thời gian",value:(recipe.TotalTimeMinutes ?? recipe.CookingTimeMinutes ?? "—") + " phút"},
-        {label:"Khẩu phần",value:(recipe.Servings ?? "—") + " người"}
-      ]);
-      $("modal-ingredients").replaceChildren();
-      if (Array.isArray(recipe.IngredientDetails) && recipe.IngredientDetails.length) {
-        recipe.IngredientDetails.forEach(function(item) {
-          const row = document.createElement("div");
-          row.className = "flex flex-col sm:flex-row sm:items-start sm:justify-between gap-1 rounded-lg bg-slate-50 px-3 py-2";
-          const left = document.createElement("div");
-          addText(left,"p",item.Name || "Nguyên liệu","font-semibold text-sm text-slate-800");
-          if (item.Preparation) addText(left,"p",item.Preparation,"text-xs text-slate-500 mt-1");
-          row.appendChild(left);
-          addText(row,"span",[item.Quantity,item.Unit].filter(Boolean).join(" "),"text-sm font-bold text-orange-700 whitespace-nowrap");
-          $("modal-ingredients").appendChild(row);
-        });
-      } else addTagList($("modal-ingredients"),arrayOf(recipe.Ingredients));
-      $("modal-preparation").replaceChildren();
-      arrayOf(recipe.Preparation).forEach(function(item){addText($("modal-preparation"),"li",item);});
-      $("modal-cooking-steps").replaceChildren();
-      $("modal-instructions").replaceChildren();
-      if (Array.isArray(recipe.CookingSteps) && recipe.CookingSteps.length) {
-        recipe.CookingSteps.forEach(function(step) {
-          const card = document.createElement("article");
-          card.className = "rounded-xl border border-slate-200 p-4";
-          addText(card,"p","BƯỚC " + step.Step + " · " + (step.Title || ""),"font-bold text-orange-700 text-sm");
-          addText(card,"p",step.Description || "","text-sm text-slate-700 leading-relaxed mt-2");
-          const details = [step.DurationMinutes != null ? step.DurationMinutes + " phút" : "",step.HeatLevel || "",step.Technique || ""].filter(Boolean).join(" · ");
-          if(details) addText(card,"p",details,"text-xs text-slate-500 mt-2");
-          if(step.CompletionCue) addText(card,"p","Dấu hiệu hoàn thành: " + step.CompletionCue,"text-xs text-emerald-700 mt-2");
-          $("modal-cooking-steps").appendChild(card);
-        });
-      } else {
-        arrayOf(recipe.Instructions).forEach(function(step){addText($("modal-instructions"),"li",step);});
-      }
-      $("modal-tips").replaceChildren();
-      arrayOf(recipe.ChefTips).forEach(function(item){addText($("modal-tips"),"li",item);});
-      $("modal-mistakes").replaceChildren();
-      arrayOf(recipe.CommonMistakes).forEach(function(item) {
-        const card=document.createElement("div"); card.className="rounded-lg bg-amber-50 border border-amber-100 p-3";
-        addText(card,"p",item.Mistake || "Lưu ý","font-semibold text-sm text-amber-900");
-        if(item.Cause) addText(card,"p","Nguyên nhân: "+item.Cause,"text-xs text-amber-800 mt-1");
-        if(item.Fix) addText(card,"p","Khắc phục: "+item.Fix,"text-xs text-amber-800 mt-1");
-        $("modal-mistakes").appendChild(card);
-      });
-      $("modal-substitutions").replaceChildren();
-      arrayOf(recipe.Substitutions).forEach(function(item) {
-        addText($("modal-substitutions"),"p",(item.Ingredient || "Nguyên liệu") + ": " + arrayOf(item.Alternatives).join(", "));
-      });
-      const n=recipe.Nutrition || {};
-      renderInfoPills($("modal-nutrition"),[
-        {label:"Năng lượng",value:(n.CaloriesKcal ?? "—")+" kcal"},
-        {label:"Protein",value:(n.ProteinG ?? "—")+" g"},
-        {label:"Carbohydrate",value:(n.CarbsG ?? "—")+" g"},
-        {label:"Chất béo",value:(n.FatG ?? "—")+" g"},
-        {label:"Chất béo bão hòa",value:(n.SaturatedFatG ?? "—")+" g"},
-        {label:"Chất xơ",value:(n.FiberG ?? "—")+" g"},
-        {label:"Đường",value:(n.SugarG ?? "—")+" g"},
-        {label:"Natri",value:(n.SodiumMg ?? "—")+" mg"}
-      ]);
-      $("modal-storage").textContent=recipe.Storage || "Chưa có hướng dẫn bảo quản.";
-      $("modal-reheating").textContent=recipe.Reheating || "Chưa có hướng dẫn hâm nóng.";
-      $("modal-notes").textContent=(recipe.Notes || "Thông tin dinh dưỡng chỉ mang tính tham khảo.") + (n.IsEstimate ? " Dữ liệu dinh dưỡng là ước tính." : "");
-      $("recipe-modal").classList.add("active");
-      document.body.style.overflow="hidden";
-      $("modal-close").focus();
-    }
-    function closeModal() {
-      $("recipe-modal").classList.remove("active");
-      document.body.style.overflow = "";
-    }
-    function makeQuery(f, random) {
-      const params = new URLSearchParams();
-      if (f.ingredients.length) params.set("ingredients", f.ingredients.join(","));
-      if (f.health) params.set("health", f.health);
-      if (f.need) params.set("need", f.need);
-      if (f.mood) params.set("mood", f.mood);
-      if (f.allergies.length) params.set("allergies", f.allergies.join(","));
-      if (f.avoid.length) params.set("avoid", f.avoid.join(","));
-      if (f.maxTime) params.set("maxTime", f.maxTime);
-      if (f.maxBudget) params.set("maxBudget", f.maxBudget);
-      if (f.maxSodium) params.set("maxSodium", f.maxSodium);
-      if (f.maxCarbs) params.set("maxCarbs", f.maxCarbs);
-      if (random) params.set("random", "true");
-      return params.toString();
-    }
-    async function requestRecipes(f, random) {
-      if (!API_URL) {
-        await new Promise(function(resolve) { setTimeout(resolve, 250); });
-        const filtered = filterMockData(f);
-        if (random) return filtered.sort(function() { return Math.random() - 0.5; }).slice(0, 6);
-        return filtered;
-      }
-      const query = makeQuery(f, random);
-      const response = await fetch(API_URL + (query ? (API_URL.indexOf("?") === -1 ? "?" : "&") + query : ""), { method: "GET" });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || ("HTTP " + response.status));
-      return Array.isArray(data.recipes) ? data.recipes : [];
-    }
-    async function searchRecipes(random) {
-      const filters = collectFilters();
-      if (!random && !hasFilters(filters)) {
-        showStatus("Hãy nhập nguyên liệu hoặc chọn ít nhất một bộ lọc trước khi tìm.", "warning");
-        return;
-      }
-      setLoading(true);
-      try {
-        const recipes = await requestRecipes(filters, Boolean(random));
-        renderResults(recipes, Boolean(API_URL));
-        if (recipes.length) showStatus("Đã tìm thấy " + recipes.length + " món phù hợp." + (API_URL ? "" : " Đang dùng dữ liệu mẫu; chưa kết nối AWS."), "success");
-        else showStatus("Không có món nào khớp tất cả tiêu chí. Hãy thử nới lỏng một bộ lọc.", "warning");
-      } catch (error) {
-        showStatus("Không thể gọi API: " + error.message + ". Kiểm tra API Gateway, CORS và URL cấu hình.", "error");
-        renderResults([], false);
-      } finally {
-        setLoading(false);
-      }
-    }
-    function resetFilters() {
-      ["ingredients","health","need","mood","maxTime","maxBudget","allergies","avoid","maxSodium","maxCarbs"].forEach(function(id) { $(id).value = ""; });
-      $("results-grid").replaceChildren();
-      $("result-count").textContent = "";
-      $("source-badge").textContent = "Chưa tìm kiếm";
-      $("source-badge").className = "text-xs font-bold rounded-full px-3 py-1 bg-slate-100 text-slate-600";
-      $("empty-state").classList.add("hidden");
-      $("status").classList.add("hidden");
-    }
-    $("search-btn").addEventListener("click", function() { searchRecipes(false); });
-    $("random-btn").addEventListener("click", function() { searchRecipes(true); });
-    $("reset-btn").addEventListener("click", resetFilters);
-    $("modal-close").addEventListener("click", closeModal);
-    $("recipe-modal").addEventListener("click", function(event) { if (event.target === $("recipe-modal")) closeModal(); });
-    document.addEventListener("keydown", function(event) { if (event.key === "Escape") closeModal(); });
-    $("ingredients").addEventListener("keydown", function(event) { if (event.key === "Enter") searchRecipes(false); });
-  </script>
+  <footer class="px-4 py-6 text-center text-xs text-slate-400">Bếp Thông Minh · Smart Kitchen Platform</footer>
 </body>
 </html>
