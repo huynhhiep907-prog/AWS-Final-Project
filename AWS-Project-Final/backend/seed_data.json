@@ -37,9 +37,133 @@
       "CarbsG": 8,
       "FatG": 22,
       "SaturatedFatG": 7,
-      "SodiumMg": 620
+      "SodiumMg": 620,
+      "FiberG": 0,
+      "SugarG": 1.5,
+      "Basis": "per_serving",
+      "IsEstimate": true
     },
-    "Notes": "Dữ liệu dinh dưỡng và chi phí là ước tính minh họa."
+    "Notes": "Dữ liệu dinh dưỡng và chi phí là ước tính minh họa. Dinh dưỡng và chi phí là ước tính tham khảo; cần điều chỉnh theo nhãn nguyên liệu, khẩu phần và giá địa phương.",
+    "Description": "Món trứng chiên cùng thịt heo xay, thơm mùi hành lá và tiêu. Thành phẩm mềm bên trong, mặt ngoài vàng nhẹ; phù hợp ăn cùng cơm nóng.",
+    "Cuisine": "Vietnamese",
+    "Category": "main",
+    "Difficulty": "easy",
+    "PrepTimeMinutes": 10,
+    "TotalTimeMinutes": 30,
+    "IngredientDetails": [
+      {
+        "Name": "trứng",
+        "Quantity": 3,
+        "Unit": "quả",
+        "Preparation": "Để về nhiệt độ phòng, đập vào tô"
+      },
+      {
+        "Name": "thịt heo xay",
+        "Quantity": 120,
+        "Unit": "g",
+        "Preparation": "Chọn thịt có tỷ lệ nạc mỡ vừa phải"
+      },
+      {
+        "Name": "hành lá",
+        "Quantity": 15,
+        "Unit": "g",
+        "Preparation": "Rửa sạch, thái nhỏ"
+      },
+      {
+        "Name": "nước mắm",
+        "Quantity": 10,
+        "Unit": "ml",
+        "Preparation": "Có thể giảm tùy khẩu vị"
+      },
+      {
+        "Name": "tiêu",
+        "Quantity": 0.5,
+        "Unit": "g",
+        "Preparation": "Tiêu xay"
+      },
+      {
+        "Name": "dầu ăn",
+        "Quantity": 10,
+        "Unit": "ml",
+        "Preparation": "Dùng để láng chảo"
+      }
+    ],
+    "Preparation": [
+      "Chuẩn bị tô trộn, phới hoặc đũa và chảo chống dính có nắp.",
+      "Rửa tay và vệ sinh bề mặt, dụng cụ sau khi tiếp xúc thịt sống.",
+      "Thái hành lá, cân gia vị và để riêng."
+    ],
+    "CookingSteps": [
+      {
+        "Step": 1,
+        "Title": "Trộn hỗn hợp",
+        "Description": "Cho trứng, thịt heo xay, hành lá, nước mắm và tiêu vào tô. Trộn đến khi thịt tơi và phân bố đều, không còn cục lớn.",
+        "DurationMinutes": 2,
+        "HeatLevel": "Không gia nhiệt",
+        "Technique": "Trộn đều",
+        "CompletionCue": "Hỗn hợp đồng nhất, thịt tơi."
+      },
+      {
+        "Step": 2,
+        "Title": "Làm nóng chảo",
+        "Description": "Láng dầu khắp đáy chảo, làm nóng ở lửa vừa.",
+        "DurationMinutes": 1,
+        "HeatLevel": "Vừa",
+        "Technique": "Làm nóng chảo",
+        "CompletionCue": "Dầu loãng và di chuyển dễ dàng, không bốc khói."
+      },
+      {
+        "Step": 3,
+        "Title": "Chiên trứng thịt",
+        "Description": "Đổ hỗn hợp vào chảo, dàn thành lớp đều. Đậy nắp, hạ lửa nhỏ-vừa để nhiệt xuyên tới phần giữa.",
+        "DurationMinutes": 8,
+        "HeatLevel": "Nhỏ-vừa",
+        "Technique": "Chiên áp chảo có đậy nắp",
+        "CompletionCue": "Viền trứng se lại, mặt trên gần đông."
+      },
+      {
+        "Step": 4,
+        "Title": "Kiểm tra độ chín",
+        "Description": "Kiểm tra phần dày nhất; tiếp tục nấu nếu thịt còn sống. Có thể chia nhỏ hoặc lật miếng nếu cần.",
+        "DurationMinutes": 2,
+        "HeatLevel": "Nhỏ",
+        "Technique": "Làm chín hoàn toàn",
+        "CompletionCue": "Phần giữa không còn lỏng; thịt chín hoàn toàn."
+      }
+    ],
+    "ChefTips": [
+      "Dàn hỗn hợp với độ dày đồng đều để phần giữa chín cùng lúc với viền.",
+      "Dùng lửa nhỏ-vừa và đậy nắp thay vì tăng lửa để rút ngắn thời gian.",
+      "Để trứng nghỉ khoảng 1 phút trước khi cắt để miếng giữ hình dạng."
+    ],
+    "CommonMistakes": [
+      {
+        "Mistake": "Mặt ngoài cháy nhưng giữa còn sống",
+        "Cause": "Lửa quá lớn hoặc lớp trứng quá dày",
+        "Fix": "Hạ lửa, đậy nắp và kéo dài thời gian nấu."
+      },
+      {
+        "Mistake": "Miếng trứng khô, dai",
+        "Cause": "Nấu quá lâu",
+        "Fix": "Kiểm tra độ chín sớm, tránh ép hoặc đảo liên tục."
+      }
+    ],
+    "Substitutions": [
+      {
+        "Ingredient": "thịt heo xay",
+        "Alternatives": [
+          "thịt gà xay"
+        ]
+      },
+      {
+        "Ingredient": "hành lá",
+        "Alternatives": [
+          "hành tây thái nhỏ"
+        ]
+      }
+    ],
+    "Storage": "Cho phần còn lại vào hộp kín và làm lạnh sớm; dùng trong 1–2 ngày để giữ chất lượng tốt nhất. Không để món đã nấu ở nhiệt độ phòng quá lâu.",
+    "Reheating": "Hâm trên chảo ở lửa nhỏ, đậy nắp đến khi nóng đều phần giữa; có thể dùng lò vi sóng trong vật dụng phù hợp."
   },
   {
     "RecipeID": "R02",
@@ -86,9 +210,133 @@
       "CarbsG": 18,
       "FatG": 10,
       "SaturatedFatG": 1.5,
-      "SodiumMg": 380
+      "SodiumMg": 380,
+      "FiberG": 3.5,
+      "SugarG": 5,
+      "Basis": "per_serving",
+      "IsEstimate": true
     },
-    "Notes": "Chọn nước tương ít natri nếu cần hạn chế natri."
+    "Notes": "Chọn nước tương ít natri nếu cần hạn chế natri. Dinh dưỡng và chi phí là ước tính tham khảo; cần điều chỉnh theo nhãn nguyên liệu, khẩu phần và giá địa phương.",
+    "Description": "Đậu hũ mềm thấm sốt cà chua chua dịu, thơm hành tỏi. Món ăn thực vật dễ kết hợp với cơm hoặc rau luộc.",
+    "Cuisine": "Vietnamese",
+    "Category": "main",
+    "Difficulty": "easy",
+    "PrepTimeMinutes": 10,
+    "TotalTimeMinutes": 30,
+    "IngredientDetails": [
+      {
+        "Name": "đậu hũ",
+        "Quantity": 300,
+        "Unit": "g",
+        "Preparation": "Thấm ráo, cắt miếng vuông vừa ăn"
+      },
+      {
+        "Name": "cà chua",
+        "Quantity": 200,
+        "Unit": "g",
+        "Preparation": "Rửa sạch, cắt múi cau hoặc hạt lựu"
+      },
+      {
+        "Name": "hành tím",
+        "Quantity": 20,
+        "Unit": "g",
+        "Preparation": "Bóc vỏ, băm nhỏ"
+      },
+      {
+        "Name": "tỏi",
+        "Quantity": 5,
+        "Unit": "g",
+        "Preparation": "Bóc vỏ, băm nhỏ"
+      },
+      {
+        "Name": "nước tương",
+        "Quantity": 10,
+        "Unit": "ml",
+        "Preparation": "Ưu tiên loại giảm natri nếu cần"
+      },
+      {
+        "Name": "dầu ăn",
+        "Quantity": 10,
+        "Unit": "ml",
+        "Preparation": "Dùng để phi thơm"
+      }
+    ],
+    "Preparation": [
+      "Thấm ráo đậu hũ để hạn chế bắn dầu và giúp miếng đậu giữ hình dạng.",
+      "Băm hành tím, tỏi; cắt cà chua.",
+      "Chuẩn bị khoảng 50 ml nước để điều chỉnh độ sệt của sốt."
+    ],
+    "CookingSteps": [
+      {
+        "Step": 1,
+        "Title": "Sơ chế đậu hũ",
+        "Description": "Cắt đậu hũ thành miếng đều nhau, thấm mặt ngoài bằng khăn giấy sạch.",
+        "DurationMinutes": 3,
+        "HeatLevel": "Không gia nhiệt",
+        "Technique": "Cắt và thấm ráo",
+        "CompletionCue": "Miếng đậu ráo, không còn nước đọng."
+      },
+      {
+        "Step": 2,
+        "Title": "Phi thơm",
+        "Description": "Làm nóng dầu, cho hành tím và tỏi vào đảo đến khi dậy mùi.",
+        "DurationMinutes": 2,
+        "HeatLevel": "Vừa-nhỏ",
+        "Technique": "Phi thơm",
+        "CompletionCue": "Hành tỏi thơm, chưa chuyển màu sẫm."
+      },
+      {
+        "Step": 3,
+        "Title": "Nấu sốt cà chua",
+        "Description": "Cho cà chua vào đảo, thêm ít nước và nấu đến khi mềm, tiết nước.",
+        "DurationMinutes": 5,
+        "HeatLevel": "Vừa",
+        "Technique": "Om mềm",
+        "CompletionCue": "Cà chua mềm và tạo thành sốt sánh nhẹ."
+      },
+      {
+        "Step": 4,
+        "Title": "Rim đậu hũ",
+        "Description": "Cho đậu hũ và nước tương vào, đảo nhẹ để không vỡ. Rim đến khi sốt bám quanh miếng đậu.",
+        "DurationMinutes": 7,
+        "HeatLevel": "Nhỏ",
+        "Technique": "Rim",
+        "CompletionCue": "Đậu nóng đều, sốt phủ bề mặt."
+      }
+    ],
+    "ChefTips": [
+      "Thấm ráo đậu trước khi nấu để sốt không bị loãng.",
+      "Đảo bằng cách lắc nhẹ chảo hoặc dùng sạn bản rộng.",
+      "Nêm nước tương từng ít một vì độ mặn mỗi nhãn hiệu khác nhau."
+    ],
+    "CommonMistakes": [
+      {
+        "Mistake": "Đậu hũ vỡ nát",
+        "Cause": "Đảo mạnh hoặc cắt miếng quá nhỏ",
+        "Fix": "Cắt miếng lớn vừa ăn và đảo nhẹ."
+      },
+      {
+        "Mistake": "Sốt quá loãng",
+        "Cause": "Cà chua chưa cô hoặc thêm quá nhiều nước",
+        "Fix": "Mở nắp rim thêm vài phút."
+      }
+    ],
+    "Substitutions": [
+      {
+        "Ingredient": "nước tương",
+        "Alternatives": [
+          "tamari"
+        ]
+      },
+      {
+        "Ingredient": "đậu hũ",
+        "Alternatives": [
+          "đậu hũ non (cần thao tác nhẹ hơn)"
+        ]
+      }
+    ],
+    "Storage": "Bảo quản trong hộp kín ở ngăn mát và dùng trong 2 ngày. Làm lạnh sớm sau khi nấu.",
+    "Reheating": "Hâm trong nồi nhỏ với 1–2 thìa nước, lửa nhỏ và đảo nhẹ đến khi nóng đều."
   },
   {
     "RecipeID": "R03",
@@ -132,9 +380,121 @@
       "CarbsG": 9,
       "FatG": 6,
       "SaturatedFatG": 2,
-      "SodiumMg": 390
+      "SodiumMg": 390,
+      "FiberG": 1.5,
+      "SugarG": 4,
+      "Basis": "per_serving",
+      "IsEstimate": true
     },
-    "Notes": "Điều chỉnh lượng muối theo nhu cầu cá nhân."
+    "Notes": "Điều chỉnh lượng muối theo nhu cầu cá nhân. Dinh dưỡng và chi phí là ước tính tham khảo; cần điều chỉnh theo nhãn nguyên liệu, khẩu phần và giá địa phương.",
+    "Description": "Canh cà chua trứng có nước dùng thanh, vị chua dịu tự nhiên từ cà chua và những dải trứng mềm.",
+    "Cuisine": "Vietnamese",
+    "Category": "soup",
+    "Difficulty": "easy",
+    "PrepTimeMinutes": 8,
+    "TotalTimeMinutes": 23,
+    "IngredientDetails": [
+      {
+        "Name": "cà chua",
+        "Quantity": 180,
+        "Unit": "g",
+        "Preparation": "Rửa sạch, bổ múi cau"
+      },
+      {
+        "Name": "trứng",
+        "Quantity": 2,
+        "Unit": "quả",
+        "Preparation": "Đập vào bát, đánh tan nhẹ"
+      },
+      {
+        "Name": "hành lá",
+        "Quantity": 10,
+        "Unit": "g",
+        "Preparation": "Thái nhỏ"
+      },
+      {
+        "Name": "nước",
+        "Quantity": 500,
+        "Unit": "ml",
+        "Preparation": "Dùng làm nước canh"
+      },
+      {
+        "Name": "muối",
+        "Quantity": 2,
+        "Unit": "g",
+        "Preparation": "Điều chỉnh theo khẩu vị"
+      }
+    ],
+    "Preparation": [
+      "Rửa cà chua và hành lá dưới vòi nước sạch.",
+      "Đánh trứng vừa tan, không cần đánh bông.",
+      "Chuẩn bị nồi và muôi khuấy."
+    ],
+    "CookingSteps": [
+      {
+        "Step": 1,
+        "Title": "Đun nước",
+        "Description": "Cho nước vào nồi và đun đến khi sôi nhẹ.",
+        "DurationMinutes": 4,
+        "HeatLevel": "Vừa-lớn",
+        "Technique": "Đun sôi",
+        "CompletionCue": "Nước sôi lăn tăn."
+      },
+      {
+        "Step": 2,
+        "Title": "Nấu cà chua",
+        "Description": "Cho cà chua vào, nấu đến khi mềm và nước chuyển màu.",
+        "DurationMinutes": 4,
+        "HeatLevel": "Vừa",
+        "Technique": "Ninh ngắn",
+        "CompletionCue": "Cà chua mềm nhưng chưa nát hoàn toàn."
+      },
+      {
+        "Step": 3,
+        "Title": "Tạo vân trứng",
+        "Description": "Giảm lửa, rót trứng thành dòng mảnh quanh nồi; khuấy nhẹ một chiều nếu muốn sợi trứng nhỏ.",
+        "DurationMinutes": 2,
+        "HeatLevel": "Nhỏ-vừa",
+        "Technique": "Rót trứng",
+        "CompletionCue": "Trứng đông thành dải mềm."
+      },
+      {
+        "Step": 4,
+        "Title": "Nêm và hoàn thiện",
+        "Description": "Nêm muối vừa phải, rắc hành lá và tắt bếp.",
+        "DurationMinutes": 1,
+        "HeatLevel": "Nhỏ",
+        "Technique": "Nêm hoàn thiện",
+        "CompletionCue": "Trứng chín hoàn toàn, nước canh nóng."
+      }
+    ],
+    "ChefTips": [
+      "Rót trứng khi nước sôi nhẹ để tạo vân đẹp.",
+      "Không khuấy mạnh ngay sau khi rót trứng.",
+      "Có thể dằm nhẹ một phần cà chua để nước canh có màu đậm hơn."
+    ],
+    "CommonMistakes": [
+      {
+        "Mistake": "Trứng vón thành cục lớn",
+        "Cause": "Rót quá nhanh hoặc khuấy mạnh",
+        "Fix": "Rót thành dòng nhỏ khi nước sôi nhẹ."
+      },
+      {
+        "Mistake": "Canh quá mặn",
+        "Cause": "Nêm muối một lần quá nhiều",
+        "Fix": "Nêm từng ít, nếm lại trước khi tắt bếp."
+      }
+    ],
+    "Substitutions": [
+      {
+        "Ingredient": "hành lá",
+        "Alternatives": [
+          "ngò rí"
+        ]
+      }
+    ],
+    "Storage": "Bảo quản trong hộp kín ở ngăn mát và dùng trong ngày hoặc ngày kế tiếp; chất lượng trứng có thể giảm khi lưu trữ.",
+    "Reheating": "Đun lại trên bếp đến khi canh sôi nhẹ và nóng đều; không đun kéo dài."
   },
   {
     "RecipeID": "R04",
@@ -179,9 +539,115 @@
       "CarbsG": 8,
       "FatG": 6,
       "SaturatedFatG": 1,
-      "SodiumMg": 280
+      "SodiumMg": 280,
+      "FiberG": 3,
+      "SugarG": 2,
+      "Basis": "per_serving",
+      "IsEstimate": true
     },
-    "Notes": "Có thể giảm hoặc bỏ nước tương để giảm natri."
+    "Notes": "Có thể giảm hoặc bỏ nước tương để giảm natri. Dinh dưỡng và chi phí là ước tính tham khảo; cần điều chỉnh theo nhãn nguyên liệu, khẩu phần và giá địa phương.",
+    "Description": "Rau muống xào tỏi giữ độ xanh và giòn nhẹ, nổi bật với hương tỏi phi thơm. Nên dùng ngay sau khi chế biến.",
+    "Cuisine": "Vietnamese",
+    "Category": "side",
+    "Difficulty": "easy",
+    "PrepTimeMinutes": 10,
+    "TotalTimeMinutes": 22,
+    "IngredientDetails": [
+      {
+        "Name": "rau muống",
+        "Quantity": 300,
+        "Unit": "g",
+        "Preparation": "Nhặt bỏ lá úa, rửa sạch, để ráo và cắt khúc"
+      },
+      {
+        "Name": "tỏi",
+        "Quantity": 12,
+        "Unit": "g",
+        "Preparation": "Bóc vỏ, đập dập và băm thô"
+      },
+      {
+        "Name": "dầu ăn",
+        "Quantity": 12,
+        "Unit": "ml",
+        "Preparation": "Dùng để phi tỏi và xào"
+      },
+      {
+        "Name": "nước tương",
+        "Quantity": 8,
+        "Unit": "ml",
+        "Preparation": "Có thể giảm hoặc bỏ"
+      }
+    ],
+    "Preparation": [
+      "Nhặt và rửa rau muống nhiều lần, để thật ráo để tránh bắn dầu.",
+      "Chuẩn bị tỏi băm và chảo rộng.",
+      "Nếu thân rau to, tách riêng phần thân và lá để cho vào chảo theo thứ tự."
+    ],
+    "CookingSteps": [
+      {
+        "Step": 1,
+        "Title": "Chuẩn bị chảo",
+        "Description": "Làm nóng chảo rộng và cho dầu ăn vào.",
+        "DurationMinutes": 1,
+        "HeatLevel": "Lớn-vừa",
+        "Technique": "Làm nóng",
+        "CompletionCue": "Dầu nóng và loang đều đáy chảo."
+      },
+      {
+        "Step": 2,
+        "Title": "Phi tỏi",
+        "Description": "Cho tỏi vào đảo nhanh đến khi thơm.",
+        "DurationMinutes": 0.5,
+        "HeatLevel": "Vừa",
+        "Technique": "Phi thơm",
+        "CompletionCue": "Tỏi dậy mùi, chưa cháy vàng đậm."
+      },
+      {
+        "Step": 3,
+        "Title": "Xào rau",
+        "Description": "Cho phần thân vào trước, đảo nhanh; tiếp tục cho lá vào và đảo đều.",
+        "DurationMinutes": 3,
+        "HeatLevel": "Lớn",
+        "Technique": "Xào nhanh",
+        "CompletionCue": "Rau chuyển xanh, thân mềm vừa và lá vừa xẹp."
+      },
+      {
+        "Step": 4,
+        "Title": "Nêm hoàn thiện",
+        "Description": "Thêm nước tương lượng nhỏ, đảo đều rồi tắt bếp.",
+        "DurationMinutes": 1,
+        "HeatLevel": "Lớn",
+        "Technique": "Nêm và đảo",
+        "CompletionCue": "Rau chín tới, không tiết quá nhiều nước."
+      }
+    ],
+    "ChefTips": [
+      "Rau phải ráo trước khi xào để chảo không bị hạ nhiệt đột ngột.",
+      "Dùng chảo rộng và chia mẻ nếu lượng rau quá nhiều.",
+      "Không xào quá lâu để rau giữ độ giòn."
+    ],
+    "CommonMistakes": [
+      {
+        "Mistake": "Rau ra nhiều nước",
+        "Cause": "Rau còn ướt hoặc chảo chưa đủ nóng",
+        "Fix": "Để rau ráo và xào từng mẻ."
+      },
+      {
+        "Mistake": "Tỏi bị đắng",
+        "Cause": "Phi quá lâu hoặc dầu quá nóng",
+        "Fix": "Phi nhanh, cho rau vào ngay khi tỏi vừa thơm."
+      }
+    ],
+    "Substitutions": [
+      {
+        "Ingredient": "nước tương",
+        "Alternatives": [
+          "bỏ qua và nêm lượng muối nhỏ phù hợp"
+        ]
+      }
+    ],
+    "Storage": "Món ngon nhất khi ăn ngay. Nếu còn dư, cho vào hộp kín, làm lạnh sớm và dùng trong 1 ngày.",
+    "Reheating": "Làm nóng nhanh trên chảo ở lửa vừa; tránh hâm nhiều lần vì rau dễ mềm nhũn."
   },
   {
     "RecipeID": "R05",
@@ -222,9 +688,133 @@
       "CarbsG": 12,
       "FatG": 14,
       "SaturatedFatG": 3.5,
-      "SodiumMg": 720
+      "SodiumMg": 720,
+      "FiberG": 0.5,
+      "SugarG": 4,
+      "Basis": "per_serving",
+      "IsEstimate": true
     },
-    "Notes": "Nước mắm có thể làm tăng natri trong món ăn."
+    "Notes": "Nước mắm có thể làm tăng natri trong món ăn. Dinh dưỡng và chi phí là ước tính tham khảo; cần điều chỉnh theo nhãn nguyên liệu, khẩu phần và giá địa phương.",
+    "Description": "Gà kho gừng có vị mặn ngọt hài hòa, thơm ấm từ gừng và hành tỏi. Nước kho sánh nhẹ, thích hợp dùng cùng cơm.",
+    "Cuisine": "Vietnamese",
+    "Category": "main",
+    "Difficulty": "medium",
+    "PrepTimeMinutes": 20,
+    "TotalTimeMinutes": 55,
+    "IngredientDetails": [
+      {
+        "Name": "thịt gà",
+        "Quantity": 300,
+        "Unit": "g",
+        "Preparation": "Chặt miếng vừa ăn, thấm khô"
+      },
+      {
+        "Name": "gừng",
+        "Quantity": 20,
+        "Unit": "g",
+        "Preparation": "Cạo vỏ, thái sợi hoặc lát mỏng"
+      },
+      {
+        "Name": "tỏi",
+        "Quantity": 8,
+        "Unit": "g",
+        "Preparation": "Băm nhỏ"
+      },
+      {
+        "Name": "hành tím",
+        "Quantity": 15,
+        "Unit": "g",
+        "Preparation": "Băm nhỏ"
+      },
+      {
+        "Name": "nước mắm",
+        "Quantity": 15,
+        "Unit": "ml",
+        "Preparation": "Điều chỉnh theo độ mặn"
+      },
+      {
+        "Name": "đường",
+        "Quantity": 8,
+        "Unit": "g",
+        "Preparation": "Tạo vị cân bằng"
+      },
+      {
+        "Name": "tiêu",
+        "Quantity": 1,
+        "Unit": "g",
+        "Preparation": "Tiêu xay"
+      }
+    ],
+    "Preparation": [
+      "Chặt gà thành miếng đồng đều; vệ sinh dao, thớt và tay sau khi sơ chế thịt sống.",
+      "Thái gừng, băm tỏi và hành tím.",
+      "Ướp gà với gừng, hành, tỏi, nước mắm, đường và tiêu khoảng 15 phút trong tủ lạnh."
+    ],
+    "CookingSteps": [
+      {
+        "Step": 1,
+        "Title": "Ướp gà",
+        "Description": "Trộn gà với gừng, hành tím, tỏi, nước mắm, đường và tiêu.",
+        "DurationMinutes": 15,
+        "HeatLevel": "Không gia nhiệt",
+        "Technique": "Ướp",
+        "CompletionCue": "Gia vị phủ đều các miếng gà."
+      },
+      {
+        "Step": 2,
+        "Title": "Áp chảo",
+        "Description": "Cho gà vào nồi hoặc chảo nóng, đảo đến khi bề mặt săn lại.",
+        "DurationMinutes": 4,
+        "HeatLevel": "Vừa",
+        "Technique": "Áp chảo",
+        "CompletionCue": "Bề mặt thịt đổi màu, không cần làm chín hoàn toàn ở bước này."
+      },
+      {
+        "Step": 3,
+        "Title": "Kho gà",
+        "Description": "Thêm lượng nước vừa đủ để tạo nước kho, đậy nắp và kho đến khi gà chín.",
+        "DurationMinutes": 15,
+        "HeatLevel": "Nhỏ-vừa",
+        "Technique": "Kho",
+        "CompletionCue": "Thịt chín tới phần dày nhất; nước kho giảm nhẹ."
+      },
+      {
+        "Step": 4,
+        "Title": "Cô nước kho",
+        "Description": "Mở nắp, nếm và điều chỉnh gia vị; đun thêm đến độ sánh mong muốn.",
+        "DurationMinutes": 3,
+        "HeatLevel": "Nhỏ",
+        "Technique": "Cô sốt",
+        "CompletionCue": "Nước kho bám nhẹ quanh miếng gà."
+      }
+    ],
+    "ChefTips": [
+      "Ướp trong ngăn mát, không để thịt sống ở nhiệt độ phòng lâu.",
+      "Chọn miếng gà kích thước gần nhau để chín đồng đều.",
+      "Có thể thêm chút nước nóng nếu nước kho cạn trước khi gà chín."
+    ],
+    "CommonMistakes": [
+      {
+        "Mistake": "Gà bị khô",
+        "Cause": "Miếng quá nhỏ hoặc kho quá lâu",
+        "Fix": "Cắt miếng vừa và kiểm tra độ chín đúng lúc."
+      },
+      {
+        "Mistake": "Nước kho quá mặn",
+        "Cause": "Nước mắm nhiều hoặc cô quá đặc",
+        "Fix": "Thêm ít nước nóng và điều chỉnh lại."
+      }
+    ],
+    "Substitutions": [
+      {
+        "Ingredient": "đường",
+        "Alternatives": [
+          "đường thốt nốt với lượng tương đương, tùy khẩu vị"
+        ]
+      }
+    ],
+    "Storage": "Cho vào hộp kín, làm lạnh sớm và dùng trong 2–3 ngày. Tách phần ăn ra trước khi dùng để tránh nhiễm chéo.",
+    "Reheating": "Hâm trong nồi với ít nước, đậy nắp và đun đến khi phần thịt nóng đều."
   },
   {
     "RecipeID": "R06",
@@ -265,9 +855,127 @@
       "CarbsG": 14,
       "FatG": 13,
       "SaturatedFatG": 4,
-      "SodiumMg": 560
+      "SodiumMg": 560,
+      "FiberG": 3.5,
+      "SugarG": 3,
+      "Basis": "per_serving",
+      "IsEstimate": true
     },
-    "Notes": "Dùng nước tương vừa phải; giá trị dinh dưỡng là ước tính."
+    "Notes": "Dùng nước tương vừa phải; giá trị dinh dưỡng là ước tính. Dinh dưỡng và chi phí là ước tính tham khảo; cần điều chỉnh theo nhãn nguyên liệu, khẩu phần và giá địa phương.",
+    "Description": "Thịt bò xào bông cải kết hợp vị ngọt của bò với độ giòn của rau xanh. Xào nhanh theo từng phần giúp nguyên liệu không bị ra quá nhiều nước.",
+    "Cuisine": "Vietnamese",
+    "Category": "main",
+    "Difficulty": "medium",
+    "PrepTimeMinutes": 15,
+    "TotalTimeMinutes": 40,
+    "IngredientDetails": [
+      {
+        "Name": "thịt bò",
+        "Quantity": 180,
+        "Unit": "g",
+        "Preparation": "Thái lát mỏng ngang thớ"
+      },
+      {
+        "Name": "bông cải xanh",
+        "Quantity": 250,
+        "Unit": "g",
+        "Preparation": "Tách nhánh nhỏ, rửa sạch"
+      },
+      {
+        "Name": "tỏi",
+        "Quantity": 10,
+        "Unit": "g",
+        "Preparation": "Băm nhỏ"
+      },
+      {
+        "Name": "dầu ăn",
+        "Quantity": 12,
+        "Unit": "ml",
+        "Preparation": "Chia để xào bò và rau"
+      },
+      {
+        "Name": "nước tương",
+        "Quantity": 10,
+        "Unit": "ml",
+        "Preparation": "Nêm vừa phải"
+      }
+    ],
+    "Preparation": [
+      "Thái bò ngang thớ thành lát mỏng và giữ lạnh đến sát lúc xào.",
+      "Tách bông cải thành nhánh vừa ăn, rửa sạch và để ráo.",
+      "Chuẩn bị tỏi băm, nước tương và chảo rộng."
+    ],
+    "CookingSteps": [
+      {
+        "Step": 1,
+        "Title": "Chần bông cải",
+        "Description": "Chần bông cải trong nước sôi ngắn, sau đó vớt ra để ráo.",
+        "DurationMinutes": 2,
+        "HeatLevel": "Vừa-lớn",
+        "Technique": "Chần",
+        "CompletionCue": "Rau xanh hơn nhưng vẫn còn độ giòn."
+      },
+      {
+        "Step": 2,
+        "Title": "Xào bò",
+        "Description": "Làm nóng chảo, thêm một phần dầu và xào bò nhanh thành lớp mỏng.",
+        "DurationMinutes": 2,
+        "HeatLevel": "Lớn",
+        "Technique": "Xào nhanh",
+        "CompletionCue": "Bề mặt bò đổi màu; chuyển ra đĩa để tránh quá lửa."
+      },
+      {
+        "Step": 3,
+        "Title": "Phi tỏi và xào rau",
+        "Description": "Thêm phần dầu còn lại, phi tỏi rồi cho bông cải vào đảo đều.",
+        "DurationMinutes": 2,
+        "HeatLevel": "Lớn-vừa",
+        "Technique": "Phi thơm, xào",
+        "CompletionCue": "Bông cải nóng và còn độ giòn."
+      },
+      {
+        "Step": 4,
+        "Title": "Hoàn thiện",
+        "Description": "Cho bò trở lại chảo, thêm nước tương, đảo đến khi bò chín phù hợp và món nóng đều.",
+        "DurationMinutes": 2,
+        "HeatLevel": "Lớn-vừa",
+        "Technique": "Đảo hoàn thiện",
+        "CompletionCue": "Bò chín, bông cải không nhũn."
+      }
+    ],
+    "ChefTips": [
+      "Không cho quá nhiều thịt vào chảo cùng lúc; chia mẻ nếu cần.",
+      "Thái bò ngang thớ để miếng dễ nhai hơn.",
+      "Để ráo bông cải sau khi chần để món không bị loãng."
+    ],
+    "CommonMistakes": [
+      {
+        "Mistake": "Bò dai",
+        "Cause": "Thái dọc thớ hoặc xào quá lâu",
+        "Fix": "Thái ngang thớ và xào nhanh."
+      },
+      {
+        "Mistake": "Bông cải mềm nhũn",
+        "Cause": "Chần và xào quá lâu",
+        "Fix": "Chần ngắn, để ráo và chỉ đảo đến khi nóng."
+      }
+    ],
+    "Substitutions": [
+      {
+        "Ingredient": "thịt bò",
+        "Alternatives": [
+          "thịt gà thái lát"
+        ]
+      },
+      {
+        "Ingredient": "nước tương",
+        "Alternatives": [
+          "tamari"
+        ]
+      }
+    ],
+    "Storage": "Bảo quản trong hộp kín ở ngăn mát và dùng trong 1–2 ngày. Rau sẽ mềm hơn sau khi bảo quản.",
+    "Reheating": "Hâm nhanh trên chảo ở lửa vừa đến khi nóng đều; tránh hâm lặp lại."
   },
   {
     "RecipeID": "R07",
@@ -310,9 +1018,118 @@
       "CarbsG": 5,
       "FatG": 10,
       "SaturatedFatG": 2,
-      "SodiumMg": 420
+      "SodiumMg": 420,
+      "FiberG": 0,
+      "SugarG": 1,
+      "Basis": "per_serving",
+      "IsEstimate": true
     },
-    "Notes": "Không dùng nếu dị ứng cá; ước tính dinh dưỡng mang tính tham khảo."
+    "Notes": "Không dùng nếu dị ứng cá; ước tính dinh dưỡng mang tính tham khảo. Dinh dưỡng và chi phí là ước tính tham khảo; cần điều chỉnh theo nhãn nguyên liệu, khẩu phần và giá địa phương.",
+    "Description": "Cá basa hấp gừng giữ được độ mềm ẩm của cá, kết hợp hương thơm dịu của gừng và hành lá. Phương pháp hấp hạn chế lượng dầu bổ sung.",
+    "Cuisine": "Vietnamese",
+    "Category": "main",
+    "Difficulty": "easy",
+    "PrepTimeMinutes": 10,
+    "TotalTimeMinutes": 35,
+    "IngredientDetails": [
+      {
+        "Name": "cá basa",
+        "Quantity": 300,
+        "Unit": "g",
+        "Preparation": "Cắt khúc hoặc phi lê dày đồng đều"
+      },
+      {
+        "Name": "gừng",
+        "Quantity": 20,
+        "Unit": "g",
+        "Preparation": "Thái sợi"
+      },
+      {
+        "Name": "hành lá",
+        "Quantity": 15,
+        "Unit": "g",
+        "Preparation": "Cắt khúc hoặc thái sợi"
+      },
+      {
+        "Name": "tỏi",
+        "Quantity": 5,
+        "Unit": "g",
+        "Preparation": "Thái lát"
+      },
+      {
+        "Name": "nước tương",
+        "Quantity": 10,
+        "Unit": "ml",
+        "Preparation": "Dùng làm gia vị sau hấp"
+      }
+    ],
+    "Preparation": [
+      "Rửa cá nhanh theo cách phù hợp, thấm khô bằng giấy dùng cho thực phẩm.",
+      "Thái gừng, hành lá và tỏi; xếp sẵn đĩa chịu nhiệt.",
+      "Đun sôi nước trong xửng hấp trước khi đặt cá vào."
+    ],
+    "CookingSteps": [
+      {
+        "Step": 1,
+        "Title": "Sắp cá",
+        "Description": "Đặt cá lên đĩa chịu nhiệt, phủ gừng, hành lá và tỏi lên trên.",
+        "DurationMinutes": 2,
+        "HeatLevel": "Không gia nhiệt",
+        "Technique": "Sắp nguyên liệu",
+        "CompletionCue": "Cá nằm thành lớp, không chồng quá dày."
+      },
+      {
+        "Step": 2,
+        "Title": "Hấp cá",
+        "Description": "Đặt đĩa vào xửng khi nước đã sôi, đậy nắp và hấp đến khi cá chín.",
+        "DurationMinutes": 12,
+        "HeatLevel": "Hơi nước sôi",
+        "Technique": "Hấp",
+        "CompletionCue": "Thịt cá chuyển đục và tách lớp dễ dàng; thời gian tùy độ dày."
+      },
+      {
+        "Step": 3,
+        "Title": "Nêm và dùng",
+        "Description": "Lấy đĩa ra cẩn thận, thêm nước tương lượng nhỏ và dùng khi còn nóng.",
+        "DurationMinutes": 1,
+        "HeatLevel": "Không gia nhiệt",
+        "Technique": "Nêm hoàn thiện",
+        "CompletionCue": "Cá chín hoàn toàn ở phần dày nhất."
+      }
+    ],
+    "ChefTips": [
+      "Làm nóng xửng trước để thời gian hấp ổn định.",
+      "Không hấp quá lâu vì cá dễ khô và bở.",
+      "Dùng đĩa có thành để giữ phần nước ngọt tiết ra từ cá."
+    ],
+    "CommonMistakes": [
+      {
+        "Mistake": "Cá bị bở",
+        "Cause": "Hấp quá lâu hoặc miếng cá quá mỏng",
+        "Fix": "Điều chỉnh thời gian theo độ dày và kiểm tra sớm."
+      },
+      {
+        "Mistake": "Cá còn sống ở giữa",
+        "Cause": "Miếng cá dày hoặc xửng chưa đủ nóng",
+        "Fix": "Hấp thêm và kiểm tra phần dày nhất trước khi ăn."
+      }
+    ],
+    "Substitutions": [
+      {
+        "Ingredient": "cá basa",
+        "Alternatives": [
+          "cá diêu hồng phi lê hoặc loại cá thịt trắng phù hợp"
+        ]
+      },
+      {
+        "Ingredient": "nước tương",
+        "Alternatives": [
+          "nước chấm phù hợp khẩu vị"
+        ]
+      }
+    ],
+    "Storage": "Bảo quản phần cá chưa ăn trong hộp kín ở ngăn mát và dùng trong 1 ngày để giữ chất lượng.",
+    "Reheating": "Hấp lại nhẹ đến khi nóng đều; tránh hấp quá lâu làm cá khô."
   },
   {
     "RecipeID": "R08",
@@ -355,8 +1172,132 @@
       "CarbsG": 32,
       "FatG": 9,
       "SaturatedFatG": 1.2,
-      "SodiumMg": 170
+      "SodiumMg": 170,
+      "FiberG": 7,
+      "SugarG": 6,
+      "Basis": "per_serving",
+      "IsEstimate": true
     },
-    "Notes": "Cần xác minh thành phần đậu gà đóng hộp nếu sử dụng."
+    "Notes": "Cần xác minh thành phần đậu gà đóng hộp nếu sử dụng. Dinh dưỡng và chi phí là ước tính tham khảo; cần điều chỉnh theo nhãn nguyên liệu, khẩu phần và giá địa phương.",
+    "Description": "Salad đậu gà kết hợp vị bùi của đậu, độ giòn mát của rau và nước trộn chanh dầu ô liu chua dịu. Phù hợp dùng như món ăn nhẹ hoặc món phụ.",
+    "Cuisine": "Mediterranean-inspired",
+    "Category": "salad",
+    "Difficulty": "easy",
+    "PrepTimeMinutes": 15,
+    "TotalTimeMinutes": 30,
+    "IngredientDetails": [
+      {
+        "Name": "đậu gà đã nấu chín",
+        "Quantity": 180,
+        "Unit": "g",
+        "Preparation": "Để ráo; nếu dùng đóng hộp cần rửa và để ráo"
+      },
+      {
+        "Name": "xà lách",
+        "Quantity": 80,
+        "Unit": "g",
+        "Preparation": "Rửa sạch, để thật ráo"
+      },
+      {
+        "Name": "dưa leo",
+        "Quantity": 100,
+        "Unit": "g",
+        "Preparation": "Rửa sạch, cắt hạt lựu"
+      },
+      {
+        "Name": "cà chua",
+        "Quantity": 100,
+        "Unit": "g",
+        "Preparation": "Rửa sạch, cắt miếng vừa ăn"
+      },
+      {
+        "Name": "chanh",
+        "Quantity": 20,
+        "Unit": "ml",
+        "Preparation": "Vắt lấy nước cốt, bỏ hạt"
+      },
+      {
+        "Name": "dầu ô liu",
+        "Quantity": 10,
+        "Unit": "ml",
+        "Preparation": "Đong sẵn"
+      }
+    ],
+    "Preparation": [
+      "Nếu dùng đậu gà khô, phải ngâm và nấu chín hoàn toàn trước; công thức tính thời gian với đậu đã nấu.",
+      "Rửa rau củ dưới vòi nước sạch, để ráo hoàn toàn.",
+      "Chuẩn bị bát nhỏ để khuấy nước cốt chanh và dầu ô liu."
+    ],
+    "CookingSteps": [
+      {
+        "Step": 1,
+        "Title": "Sơ chế rau",
+        "Description": "Xé xà lách thành miếng vừa ăn, cắt dưa leo và cà chua.",
+        "DurationMinutes": 5,
+        "HeatLevel": "Không gia nhiệt",
+        "Technique": "Cắt và để ráo",
+        "CompletionCue": "Rau sạch, ráo nước và kích thước tương đối đồng đều."
+      },
+      {
+        "Step": 2,
+        "Title": "Chuẩn bị đậu",
+        "Description": "Để ráo đậu gà đã nấu chín; loại bỏ phần vỏ rời nếu muốn kết cấu mịn hơn.",
+        "DurationMinutes": 2,
+        "HeatLevel": "Không gia nhiệt",
+        "Technique": "Để ráo",
+        "CompletionCue": "Đậu không còn nước đọng."
+      },
+      {
+        "Step": 3,
+        "Title": "Pha nước trộn",
+        "Description": "Khuấy nước cốt chanh với dầu ô liu đến khi hòa quyện.",
+        "DurationMinutes": 1,
+        "HeatLevel": "Không gia nhiệt",
+        "Technique": "Nhũ hóa đơn giản",
+        "CompletionCue": "Hỗn hợp hơi đục và đồng nhất."
+      },
+      {
+        "Step": 4,
+        "Title": "Trộn salad",
+        "Description": "Trộn đậu và rau với nước sốt ngay trước khi ăn.",
+        "DurationMinutes": 2,
+        "HeatLevel": "Không gia nhiệt",
+        "Technique": "Trộn nhẹ",
+        "CompletionCue": "Các nguyên liệu được phủ sốt vừa đủ, rau vẫn giòn."
+      }
+    ],
+    "ChefTips": [
+      "Để rau thật ráo để nước sốt không bị loãng.",
+      "Chỉ trộn ngay trước khi ăn để giữ độ giòn.",
+      "Nếm nước sốt trước, điều chỉnh chanh và dầu theo khẩu vị."
+    ],
+    "CommonMistakes": [
+      {
+        "Mistake": "Salad bị nhiều nước",
+        "Cause": "Rau chưa ráo hoặc trộn quá sớm",
+        "Fix": "Làm ráo rau và trộn ngay trước khi dùng."
+      },
+      {
+        "Mistake": "Đậu gà cứng",
+        "Cause": "Đậu chưa được nấu chín hoàn toàn",
+        "Fix": "Dùng đậu đã nấu mềm; không chỉ ngâm rồi ăn."
+      }
+    ],
+    "Substitutions": [
+      {
+        "Ingredient": "dầu ô liu",
+        "Alternatives": [
+          "dầu thực vật có hương vị nhẹ"
+        ]
+      },
+      {
+        "Ingredient": "chanh",
+        "Alternatives": [
+          "giấm táo lượng nhỏ"
+        ]
+      }
+    ],
+    "Storage": "Bảo quản rau, đậu và nước sốt riêng trong hộp kín ở ngăn mát; trộn ngay trước khi ăn và dùng trong 1–2 ngày.",
+    "Reheating": "Không cần hâm nóng; dùng lạnh hoặc để bớt lạnh tùy khẩu vị."
   }
 ]
