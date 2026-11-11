@@ -1,45 +1,121 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Khám phá món ăn và tìm gợi ý đặt đồ ăn phù hợp với bạn.">
-  <title>Đặt đồ ăn — Bếp Thông Minh</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Đặt đồ ăn — Bếp Thông Minh</title><script src="https://cdn.tailwindcss.com"></script>
   <style>
-    body { background: linear-gradient(135deg,#fff7ed 0%,#fff 55%,#fff1f2 100%); }
-    .dish-card { transition: transform .18s ease, box-shadow .18s ease; }
-    .dish-card:hover { transform: translateY(-3px); box-shadow: 0 14px 30px rgba(15,23,42,.10); }
+    body{background:linear-gradient(135deg,#fff7ed 0%,#fff 55%,#fff1f2 100%)}
+    .dish-card{transition:transform .18s ease,box-shadow .18s ease}.dish-card:hover{transform:translateY(-3px);box-shadow:0 14px 30px rgba(15,23,42,.10)}
+    .filter-chip{border:1px solid #fecdd3;background:white;color:#9f1239}.filter-chip.active{background:#e11d48;color:white;border-color:#e11d48}
+    input[type=range]{accent-color:#e11d48}
   </style>
 </head>
 <body class="min-h-screen font-sans text-slate-800">
-  <header class="bg-gradient-to-r from-rose-500 to-orange-500 text-white shadow-lg">
-    <div class="max-w-6xl mx-auto px-4 py-5 flex flex-wrap items-center gap-3">
-      <div>
-        <p class="text-xl font-extrabold">🍱 Bếp Thông Minh · Đặt đồ ăn</p>
-        <p class="text-rose-50 text-sm">Khám phá món ngon, chọn món phù hợp với bạn.</p>
-      </div>
-      <nav class="ml-auto flex flex-wrap items-center gap-2" aria-label="Điều hướng khu vực">
-        <a href="../index.html" class="rounded-lg border border-white/50 bg-white/15 px-4 py-2 text-sm font-semibold hover:bg-white/25">⌂ Trang chủ</a>
-        <a href="../cooking/index.html" class="rounded-lg border border-white/50 bg-white/15 px-4 py-2 text-sm font-semibold hover:bg-white/25">🥗 Chuyển sang nấu ăn</a>
-      </nav>
+<header class="bg-gradient-to-r from-rose-500 to-orange-500 text-white shadow-lg"><div class="max-w-6xl mx-auto px-4 py-5 flex flex-wrap items-center gap-3">
+  <div><p class="text-xl font-extrabold">🍱 Bếp Thông Minh · Đặt đồ ăn</p><p class="text-rose-50 text-sm">Tìm món ngon phù hợp với khẩu vị và ngân sách.</p></div>
+  <nav class="ml-auto flex flex-wrap items-center gap-2" aria-label="Điều hướng khu vực">
+    <a href="../index.html" class="rounded-lg border border-white/50 bg-white/15 px-4 py-2 text-sm font-semibold hover:bg-white/25">⌂ Trang chủ</a>
+    <a href="../cooking/index.html" class="rounded-lg border border-white/50 bg-white/15 px-4 py-2 text-sm font-semibold hover:bg-white/25">🥗 Chuyển sang nấu ăn</a>
+  </nav>
+</div></header>
+<main class="max-w-6xl mx-auto px-4 py-8">
+  <section class="rounded-2xl bg-white p-6 shadow-sm sm:p-8">
+    <p class="text-sm font-bold uppercase tracking-wider text-rose-600">🍽️ Hôm nay ăn gì?</p>
+    <h1 class="mt-2 text-2xl font-extrabold sm:text-3xl">Tìm món ăn dành cho bạn</h1>
+    <p class="mt-2 max-w-2xl text-slate-600">Tìm kiếm món, lọc theo loại món và ngân sách. Đây là dữ liệu mẫu để thử nghiệm giao diện, chưa phải menu nhà hàng trực tiếp.</p>
+    <div class="mt-6 grid gap-3 sm:grid-cols-[1fr_auto]">
+      <label class="block"><span class="mb-1 block text-sm font-semibold">Tìm món ăn</span><input id="searchInput" type="search" placeholder="Ví dụ: cơm tấm, phở, gà..." class="w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:border-rose-400 focus:ring-2 focus:ring-rose-100"></label>
+      <div class="flex items-end"><button id="randomBtn" class="w-full rounded-xl bg-rose-600 px-5 py-3 font-bold text-white hover:bg-rose-700 sm:w-auto">🎲 Gợi ý món bất kỳ</button></div>
     </div>
-  </header>
-  <main class="max-w-6xl mx-auto px-4 py-8">
-    <section class="rounded-2xl border border-rose-100 bg-white/95 p-6 shadow-sm sm:p-8">
-      <p class="text-sm font-bold uppercase tracking-wider text-rose-600">Bạn muốn ăn gì hôm nay?</p>
-      <h1 class="mt-2 text-2xl font-extrabold sm:text-3xl">Để Bếp Thông Minh giúp bạn chọn món</h1>
-      <p class="mt-2 max-w-2xl text-slate-600">Khu vực này dành riêng cho người muốn đặt đồ ăn, không cần tìm nguyên liệu hay xem hướng dẫn nấu.</p>
-      <div class="mt-6 grid gap-4 sm:grid-cols-3">
-        <article class="rounded-xl bg-rose-50 p-4"><div class="text-2xl">💰</div><h2 class="mt-2 font-bold">Theo ngân sách</h2><p class="mt-1 text-sm text-slate-600">Tìm món phù hợp số tiền bạn dự định chi.</p></article>
-        <article class="rounded-xl bg-orange-50 p-4"><div class="text-2xl">🍜</div><h2 class="mt-2 font-bold">Theo khẩu vị</h2><p class="mt-1 text-sm text-slate-600">Chọn món nước, cơm, món chay, cay hoặc thanh nhẹ.</p></article>
-        <article class="rounded-xl bg-amber-50 p-4"><div class="text-2xl">🎲</div><h2 class="mt-2 font-bold">Gợi ý ngẫu nhiên</h2><p class="mt-1 text-sm text-slate-600">Khi bạn chưa biết hôm nay nên ăn gì.</p></article>
-      </div>
-      <div class="mt-6 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm leading-relaxed text-amber-900">
-        <strong>Giai đoạn hiện tại:</strong> Đây là giao diện nền ban đầu. Danh sách món, bộ lọc, dữ liệu nhà hàng và liên kết đặt món sẽ được xây dựng ở bước tiếp theo. Chưa kết nối GrabFood hoặc ShopeeFood; giá và tình trạng món chưa phải dữ liệu trực tiếp.
-      </div>
-    </section>
-  </main>
-  <footer class="py-6 text-center text-xs text-slate-400">Bếp Thông Minh · Khu vực đặt đồ ăn</footer>
+    <div id="randomResult" class="mt-3 hidden rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm"></div>
+  </section>
+  <section class="mt-6 grid gap-6 lg:grid-cols-[260px_1fr]">
+    <aside class="h-fit rounded-2xl border border-rose-100 bg-white p-5 shadow-sm">
+      <div class="flex items-center justify-between"><h2 class="text-lg font-extrabold">Bộ lọc món ăn</h2><button id="resetBtn" class="text-sm font-semibold text-rose-600 hover:underline">Đặt lại</button></div>
+      <div class="mt-5"><h3 class="mb-3 text-sm font-bold">Loại món</h3><div id="categoryFilters" class="flex flex-wrap gap-2">
+        <button class="filter-chip active rounded-full px-3 py-2 text-sm font-semibold" data-category="all">Tất cả</button>
+        <button class="filter-chip rounded-full px-3 py-2 text-sm font-semibold" data-category="Cơm">🍚 Cơm</button>
+        <button class="filter-chip rounded-full px-3 py-2 text-sm font-semibold" data-category="Món nước">🍜 Món nước</button>
+        <button class="filter-chip rounded-full px-3 py-2 text-sm font-semibold" data-category="Đồ ăn nhanh">🍔 Ăn nhanh</button>
+        <button class="filter-chip rounded-full px-3 py-2 text-sm font-semibold" data-category="Món chay">🥬 Món chay</button>
+        <button class="filter-chip rounded-full px-3 py-2 text-sm font-semibold" data-category="Ăn vặt">🍟 Ăn vặt</button>
+      </div></div>
+      <div class="mt-6 border-t border-slate-100 pt-5"><div class="flex items-center justify-between"><h3 class="text-sm font-bold">Ngân sách tối đa</h3><span id="budgetValue" class="font-extrabold text-rose-600">100.000đ</span></div>
+        <input id="budgetRange" type="range" min="15000" max="150000" step="5000" value="100000" class="mt-4 w-full"><div class="mt-1 flex justify-between text-xs text-slate-400"><span>15.000đ</span><span>150.000đ</span></div></div>
+      <div class="mt-6 border-t border-slate-100 pt-5"><label class="flex cursor-pointer items-center gap-2 text-sm font-medium"><input id="vegetarianOnly" type="checkbox" class="h-4 w-4 accent-rose-600">Chỉ hiển thị món chay</label></div>
+    </aside>
+    <div>
+      <div class="mb-4 flex flex-wrap items-center justify-between gap-3"><p class="text-sm text-slate-600">Tìm thấy <strong id="resultCount" class="text-slate-900">0</strong> món</p>
+        <label class="flex items-center gap-2 text-sm"><span class="font-medium">Sắp xếp:</span><select id="sortSelect" class="rounded-lg border border-slate-200 bg-white px-3 py-2 outline-none focus:border-rose-400"><option value="recommended">Gợi ý</option><option value="priceAsc">Giá thấp đến cao</option><option value="priceDesc">Giá cao đến thấp</option><option value="name">Tên A–Z</option></select></label></div>
+      <div id="dishGrid" class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3"></div>
+      <div id="emptyState" class="hidden rounded-2xl border border-dashed border-rose-200 bg-white p-10 text-center"><div class="text-4xl">🔎</div><h3 class="mt-3 font-bold">Chưa tìm thấy món phù hợp</h3><p class="mt-1 text-sm text-slate-500">Thử đổi từ khóa hoặc nới rộng ngân sách nhé.</p></div>
+    </div>
+  </section>
+  <section class="mt-6 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm leading-relaxed text-amber-900"><strong>Lưu ý bản thử nghiệm:</strong> Món ăn, giá và hình thức hiển thị hiện là dữ liệu minh họa. Chưa có đặt hàng thật, thanh toán, nhà hàng đối tác hoặc kết nối GrabFood/ShopeeFood.</section>
+</main>
+<footer class="py-6 text-center text-xs text-slate-400">Bếp Thông Minh · Khu vực đặt đồ ăn</footer>
+<script>
+const dishes=[
+{id:1,name:"Cơm tấm sườn bì chả",category:"Cơm",price:45000,emoji:"🍛",description:"Cơm tấm thơm, sườn nướng, bì và chả trứng.",restaurant:"Quán Cơm Nhà",vegetarian:false},
+{id:2,name:"Cơm gà xối mỡ",category:"Cơm",price:50000,emoji:"🍗",description:"Gà chiên giòn bên ngoài, thịt mềm bên trong.",restaurant:"Góc Gà Giòn",vegetarian:false},
+{id:3,name:"Cơm chiên rau củ",category:"Cơm",price:35000,emoji:"🥘",description:"Cơm chiên cùng rau củ tươi và trứng.",restaurant:"Bếp Xanh",vegetarian:true},
+{id:4,name:"Phở bò tái",category:"Món nước",price:55000,emoji:"🍜",description:"Nước dùng thơm, bánh phở mềm và thịt bò tái.",restaurant:"Phở Việt",vegetarian:false},
+{id:5,name:"Bún thịt nướng",category:"Món nước",price:42000,emoji:"🥢",description:"Thịt nướng, bún tươi, rau sống và nước mắm.",restaurant:"Bún Ngon",vegetarian:false},
+{id:6,name:"Hủ tiếu Nam Vang",category:"Món nước",price:48000,emoji:"🍲",description:"Hủ tiếu với tôm, thịt và nước dùng thanh.",restaurant:"Hủ Tiếu 24h",vegetarian:false},
+{id:7,name:"Burger bò phô mai",category:"Đồ ăn nhanh",price:59000,emoji:"🍔",description:"Burger bò áp chảo, phô mai và rau tươi.",restaurant:"Fast Bite",vegetarian:false},
+{id:8,name:"Gà rán giòn",category:"Đồ ăn nhanh",price:39000,emoji:"🍗",description:"Miếng gà tẩm gia vị, lớp vỏ vàng giòn.",restaurant:"Crispy Chicken",vegetarian:false},
+{id:9,name:"Bánh mì trứng",category:"Đồ ăn nhanh",price:22000,emoji:"🥖",description:"Bánh mì nóng giòn với trứng và rau.",restaurant:"Bánh Mì Sáng",vegetarian:true},
+{id:10,name:"Bún riêu chay",category:"Món chay",price:38000,emoji:"🥬",description:"Nước dùng cà chua, đậu hũ và rau tươi.",restaurant:"Bếp Chay An",vegetarian:true},
+{id:11,name:"Gỏi cuốn",category:"Ăn vặt",price:25000,emoji:"🥗",description:"Cuốn rau tươi, bún và nước chấm.",restaurant:"Cuốn Cuốn",vegetarian:true},
+{id:12,name:"Khoai tây chiên",category:"Ăn vặt",price:30000,emoji:"🍟",description:"Khoai tây chiên vàng, dùng kèm tương.",restaurant:"Fast Bite",vegetarian:true}
+];
+const state={category:"all",budget:100000,vegetarian:false,search:"",sort:"recommended"};
+const money=value=>new Intl.NumberFormat("vi-VN").format(value)+"đ";
+function getFilteredDishes(){
+ let result=dishes.filter(dish=>{
+  const text=(dish.name+" "+dish.category+" "+dish.description+" "+dish.restaurant).toLowerCase();
+  return(state.category==="all"||dish.category===state.category)&&dish.price<=state.budget&&(!state.vegetarian||dish.vegetarian)&&text.includes(state.search.toLowerCase());
+ });
+ if(state.sort==="priceAsc")result.sort((a,b)=>a.price-b.price);
+ if(state.sort==="priceDesc")result.sort((a,b)=>b.price-a.price);
+ if(state.sort==="name")result.sort((a,b)=>a.name.localeCompare(b.name,"vi"));
+ return result;
+}
+function renderDishes(){
+ const result=getFilteredDishes();
+ document.getElementById("resultCount").textContent=result.length;
+ document.getElementById("emptyState").classList.toggle("hidden",result.length!==0);
+ document.getElementById("dishGrid").innerHTML=result.map(dish=>
+  '<article class="dish-card overflow-hidden rounded-2xl border border-rose-100 bg-white shadow-sm">'+
+  '<div class="flex h-32 items-center justify-center bg-gradient-to-br from-rose-50 to-orange-50 text-6xl">'+dish.emoji+'</div>'+
+  '<div class="p-4"><div class="flex items-start justify-between gap-2"><h3 class="font-extrabold">'+dish.name+'</h3><span class="shrink-0 rounded-full bg-rose-50 px-2 py-1 text-xs font-bold text-rose-700">'+dish.category+'</span></div>'+
+  '<p class="mt-2 min-h-10 text-sm text-slate-500">'+dish.description+'</p><p class="mt-3 text-xs text-slate-400">🏪 '+dish.restaurant+'</p>'+
+  '<div class="mt-4 flex items-center justify-between border-t border-slate-100 pt-3"><span class="text-lg font-extrabold text-rose-600">'+money(dish.price)+'</span><span class="text-xs '+(dish.vegetarian?"text-green-700":"text-slate-400")+'">'+(dish.vegetarian?"🥬 Có lựa chọn chay":"Món mặn")+'</span></div></div></article>'
+ ).join("");
+}
+document.getElementById("searchInput").addEventListener("input",event=>{state.search=event.target.value.trim();renderDishes();});
+document.getElementById("budgetRange").addEventListener("input",event=>{state.budget=Number(event.target.value);document.getElementById("budgetValue").textContent=money(state.budget);renderDishes();});
+document.getElementById("vegetarianOnly").addEventListener("change",event=>{state.vegetarian=event.target.checked;renderDishes();});
+document.getElementById("sortSelect").addEventListener("change",event=>{state.sort=event.target.value;renderDishes();});
+document.getElementById("categoryFilters").addEventListener("click",event=>{
+ const button=event.target.closest("button[data-category]");if(!button)return;
+ state.category=button.dataset.category;
+ document.querySelectorAll("[data-category]").forEach(item=>item.classList.toggle("active",item===button));renderDishes();
+});
+document.getElementById("resetBtn").addEventListener("click",()=>{
+ state.category="all";state.budget=100000;state.vegetarian=false;state.search="";state.sort="recommended";
+ document.getElementById("searchInput").value="";document.getElementById("budgetRange").value="100000";document.getElementById("budgetValue").textContent=money(100000);
+ document.getElementById("vegetarianOnly").checked=false;document.getElementById("sortSelect").value="recommended";
+ document.querySelectorAll("[data-category]").forEach(item=>item.classList.toggle("active",item.dataset.category==="all"));renderDishes();
+});
+document.getElementById("randomBtn").addEventListener("click",()=>{
+ const result=getFilteredDishes(),box=document.getElementById("randomResult");
+ if(!result.length)box.textContent="Không có món phù hợp với bộ lọc hiện tại. Hãy nới ngân sách hoặc đặt lại bộ lọc.";
+ else{const dish=result[Math.floor(Math.random()*result.length)];box.innerHTML="<strong>Gợi ý hôm nay: "+dish.emoji+" "+dish.name+"</strong><br>"+dish.description+"<br><span class='font-bold text-rose-700'>"+money(dish.price)+"</span> · "+dish.restaurant;}
+ box.classList.remove("hidden");
+});
+renderDishes();
+</script>
 </body>
 </html>
