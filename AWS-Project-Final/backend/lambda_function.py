@@ -11,6 +11,8 @@ import os
 import random
 import re
 import unicodedata
+import uuid
+from datetime import datetime, timezone
 from decimal import Decimal
 
 import boto3
@@ -21,15 +23,17 @@ logger.setLevel(logging.INFO)
 
 REGION = os.environ.get("AWS_REGION", "ap-southeast-1")
 TABLE_NAME = os.environ.get("DYNAMODB_TABLE", "MealRecipesTable")
+ORDERS_TABLE_NAME = os.environ.get("ORDERS_TABLE", "FoodOrdersTable")
 MAX_INPUT_LENGTH = 200
 MAX_KEYWORDS = 10
 dynamodb = boto3.resource("dynamodb", region_name=REGION)
 table = dynamodb.Table(TABLE_NAME)
+orders_table = dynamodb.Table(ORDERS_TABLE_NAME)
 
 CORS_HEADERS = {
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Headers": "Content-Type,Authorization",
-    "Access-Control-Allow-Methods": "GET,OPTIONS",
+    "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
     "Content-Type": "application/json; charset=utf-8",
 }
 
@@ -159,6 +163,85 @@ def ingredient_score(recipe, keywords):
     return sum(1 for term in keywords if any(normalize(term) in ing for ing in ingredients))
 
 
+def parse_order_body(event):
+    body = event.get("body") or "{}"
+    if event.get("isBase64Encoded"):
+        import base64
+        body = base64.b64decode(body).decode("utf-8")
+    try:
+        return json.loads(body)
+    except (TypeError, json.JSONDecodeError):
+        raise ValueError("Dữ liệu đơn hàng không phải JSON hợp lệ.")
+
+
+def create_order(event):
+    payload = parse_order_body(event)
+    customer = payload.get("customer") or {}
+    name = str(customer.get("name") or "").strip()
+    phone = str(customer.get("phone") or "").strip()
+    address = str(customer.get("address") or "").strip()
+    payment_method = str(payload.get("paymentMethod") or "cod").strip().lower()
+    raw_items = payload.get("items")
+
+    if not name or len(name) > 80:
+        raise ValueError("Tên người nhận là bắt buộc và tối đa 80 ký tự.")
+    if not re.fullmatch(r"[0-9 +().-]{9,16}", phone):
+        raise ValueError("Số điện thoại không hợp lệ.")
+    if not address or len(address) > 250:
+        raise ValueError("Địa chỉ nhận hàng là bắt buộc và tối đa 250 ký tự.")
+    if payment_method != "cod":
+        raise ValueError("Hiện chỉ hỗ trợ thanh toán khi nhận hàng (COD).")
+    if not isinstance(raw_items, list) or not raw_items or len(raw_items) > 20:
+        raise ValueError("Đơn hàng phải có từ 1 đến 20 món.")
+
+    items = []
+    total = 0
+    for raw in raw_items:
+        if not isinstance(raw, dict):
+            raise ValueError("Thông tin món ăn không hợp lệ.")
+        item_id = str(raw.get("id") or "").strip()
+        item_name = str(raw.get("name") or "").strip()
+        category = str(raw.get("category") or "").strip()
+        try:
+            price = int(raw.get("price"))
+            quantity = int(raw.get("quantity"))
+        except (TypeError, ValueError):
+            raise ValueError("Giá và số lượng món ăn phải là số nguyên.")
+        if not item_id or len(item_id) > 40 or not item_name or len(item_name) > 120:
+            raise ValueError("Thiếu mã hoặc tên món ăn hợp lệ.")
+        if price < 1 or price > 10000000 or quantity < 1 or quantity > 50:
+            raise ValueError("Giá hoặc số lượng món ăn nằm ngoài giới hạn.")
+        line_total = price * quantity
+        total += line_total
+        items.append({
+            "id": item_id,
+            "name": item_name,
+            "category": category[:50],
+            "price": price,
+            "quantity": quantity,
+            "lineTotal": line_total,
+        })
+
+    order_id = "BTM-" + uuid.uuid4().hex[:10].upper()
+    created_at = datetime.now(timezone.utc).isoformat()
+    order = {
+        "OrderID": order_id,
+        "CreatedAt": created_at,
+        "Status": "RECEIVED",
+        "Customer": {"Name": name, "Phone": phone, "Address": address},
+        "Items": items,
+        "TotalAmount": total,
+        "PaymentMethod": "COD",
+    }
+    orders_table.put_item(Item=order, ConditionExpression="attribute_not_exists(OrderID)")
+    logger.info("Created order %s with %s items; total=%s", order_id, len(items), total)
+    return response(201, {
+        "message": "Đặt hàng thành công.",
+        "order": order,
+        "source": "dynamodb",
+    })
+
+
 def lambda_handler(event, context):
     method = (
         event.get("httpMethod")
@@ -167,8 +250,19 @@ def lambda_handler(event, context):
     ).upper()
     if method == "OPTIONS":
         return response(200, {"message": "CORS OK"})
+    if method == "POST":
+        try:
+            return create_order(event)
+        except ValueError as exc:
+            return response(400, {"error": str(exc)})
+        except ClientError:
+            logger.exception("Could not save order to DynamoDB")
+            return response(500, {"error": "Không lưu được đơn hàng. Kiểm tra bảng FoodOrdersTable và quyền IAM."})
+        except Exception:
+            logger.exception("Unhandled order creation error")
+            return response(500, {"error": "Lỗi khi tạo đơn hàng. Xem CloudWatch Logs để biết chi tiết."})
     if method != "GET":
-        return response(405, {"error": "Chỉ hỗ trợ phương thức GET."})
+        return response(405, {"error": "Chỉ hỗ trợ GET để tìm công thức và POST để tạo đơn hàng."})
 
     try:
         params = query_params(event)
