@@ -52,6 +52,21 @@
       <div id="emptyState" class="hidden rounded-2xl border border-dashed border-rose-200 bg-white p-10 text-center"><div class="text-4xl">🔎</div><h3 class="mt-3 font-bold">Chưa tìm thấy món phù hợp</h3><p class="mt-1 text-sm text-slate-500">Thử đổi từ khóa hoặc nới rộng ngân sách nhé.</p></div>
     </div>
   </section>
+  <section id="cartSection" class="mt-8 rounded-2xl border border-rose-100 bg-white p-6 shadow-sm">
+    <div class="flex flex-wrap items-center justify-between gap-2"><div><p class="text-sm font-bold uppercase tracking-wider text-rose-600">🛒 Giỏ hàng</p><h2 class="mt-1 text-xl font-extrabold">Đơn hàng của bạn</h2></div><span id="cartCount" class="rounded-full bg-rose-50 px-3 py-1 text-sm font-bold text-rose-700">0 món</span></div>
+    <div id="cartItems" class="mt-4"><p class="rounded-xl bg-slate-50 p-4 text-sm text-slate-500">Giỏ hàng đang trống. Hãy chọn món bạn thích nhé.</p></div>
+    <div class="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-4"><span class="font-bold">Tổng tạm tính</span><strong id="cartTotal" class="text-xl text-rose-600">0đ</strong></div>
+    <form id="checkoutForm" class="mt-6 grid gap-3 border-t border-slate-100 pt-5 sm:grid-cols-2">
+      <h3 class="sm:col-span-2 font-extrabold">Thông tin nhận đơn (mô phỏng)</h3>
+      <label class="text-sm font-medium">Họ và tên<input id="customerName" required maxlength="80" autocomplete="name" class="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2" placeholder="Tên người nhận"></label>
+      <label class="text-sm font-medium">Số điện thoại<input id="customerPhone" required type="tel" pattern="[0-9 +().-]{9,16}" maxlength="16" autocomplete="tel" class="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2" placeholder="Số điện thoại"></label>
+      <label class="text-sm font-medium sm:col-span-2">Địa chỉ nhận hàng<textarea id="customerAddress" required maxlength="250" autocomplete="street-address" rows="2" class="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2" placeholder="Số nhà, đường, phường/xã..."></textarea></label>
+      <label class="text-sm font-medium sm:col-span-2">Phương thức thanh toán<select id="paymentMethod" class="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2"><option value="cod">Thanh toán khi nhận (mô phỏng)</option></select></label>
+      <button id="checkoutBtn" type="submit" class="rounded-xl bg-rose-600 px-5 py-3 font-bold text-white hover:bg-rose-700 sm:col-span-2">Xác nhận đơn hàng thử nghiệm</button>
+    </form>
+    <div id="orderMessage" role="status" aria-live="polite" class="mt-4 hidden rounded-xl border border-green-200 bg-green-50 p-4 text-sm text-green-800"></div>
+    <p class="mt-3 text-xs text-slate-400">Đây chỉ là giỏ hàng và xác nhận đơn hàng ở trình duyệt. Chưa gửi đơn đến nhà hàng, chưa lưu lên AWS và chưa phát sinh thanh toán.</p>
+  </section>
   <section class="mt-6 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm leading-relaxed text-amber-900"><strong>Lưu ý bản thử nghiệm:</strong> Món ăn, giá và hình thức hiển thị hiện là dữ liệu minh họa. Chưa có đặt hàng thật, thanh toán, nhà hàng đối tác hoặc kết nối GrabFood/ShopeeFood.</section>
 </main>
 <footer class="py-6 text-center text-xs text-slate-400">Bếp Thông Minh · Khu vực đặt đồ ăn</footer>
@@ -71,6 +86,7 @@ const dishes=[
 {id:12,name:"Khoai tây chiên",category:"Ăn vặt",price:30000,emoji:"🍟",description:"Khoai tây chiên vàng, dùng kèm tương.",restaurant:"Fast Bite",vegetarian:true}
 ];
 const state={category:"all",budget:100000,vegetarian:false,search:"",sort:"recommended"};
+const cart = {};
 const money=value=>new Intl.NumberFormat("vi-VN").format(value)+"đ";
 function getFilteredDishes(){
  let result=dishes.filter(dish=>{
@@ -91,9 +107,60 @@ function renderDishes(){
   '<div class="flex h-32 items-center justify-center bg-gradient-to-br from-rose-50 to-orange-50 text-6xl">'+dish.emoji+'</div>'+
   '<div class="p-4"><div class="flex items-start justify-between gap-2"><h3 class="font-extrabold">'+dish.name+'</h3><span class="shrink-0 rounded-full bg-rose-50 px-2 py-1 text-xs font-bold text-rose-700">'+dish.category+'</span></div>'+
   '<p class="mt-2 min-h-10 text-sm text-slate-500">'+dish.description+'</p><p class="mt-3 text-xs text-slate-400">🏪 '+dish.restaurant+'</p>'+
-  '<div class="mt-4 flex items-center justify-between border-t border-slate-100 pt-3"><span class="text-lg font-extrabold text-rose-600">'+money(dish.price)+'</span><span class="text-xs '+(dish.vegetarian?"text-green-700":"text-slate-400")+'">'+(dish.vegetarian?"🥬 Có lựa chọn chay":"Món mặn")+'</span></div></div></article>'
+  '<div class="mt-4 flex items-center justify-between border-t border-slate-100 pt-3"><span class="text-lg font-extrabold text-rose-600">'+money(dish.price)+'</span><span class="text-xs '+(dish.vegetarian?"text-green-700":"text-slate-400")+'">'+(dish.vegetarian?"🥬 Có lựa chọn chay":"Món mặn")+'</span></div><button data-add-cart="'+dish.id+'" class="mt-3 w-full rounded-xl bg-rose-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-rose-700">＋ Thêm vào giỏ</button></div></article>'
  ).join("");
 }
+
+function renderCart(){
+ const entries=Object.values(cart);
+ const count=entries.reduce((sum,item)=>sum+item.quantity,0);
+ const total=entries.reduce((sum,item)=>sum+item.price*item.quantity,0);
+ document.getElementById("cartCount").textContent=count+" món";
+ document.getElementById("cartTotal").textContent=money(total);
+ document.getElementById("cartItems").innerHTML=entries.length?entries.map(item=>
+  '<div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 py-3">'+
+  '<div class="min-w-0 flex-1"><p class="font-bold">'+item.emoji+' '+item.name+'</p><p class="text-sm text-slate-500">'+money(item.price)+' / phần</p></div>'+
+  '<div class="flex items-center gap-2"><button type="button" data-cart-action="minus" data-id="'+item.id+'" aria-label="Giảm số lượng" class="h-8 w-8 rounded-lg border border-slate-200 font-bold">−</button><span class="w-6 text-center font-bold">'+item.quantity+'</span><button type="button" data-cart-action="plus" data-id="'+item.id+'" aria-label="Tăng số lượng" class="h-8 w-8 rounded-lg border border-slate-200 font-bold">+</button><button type="button" data-cart-action="remove" data-id="'+item.id+'" class="ml-1 text-sm font-semibold text-rose-600">Xóa</button></div></div>'
+ ).join(""):'<p class="rounded-xl bg-slate-50 p-4 text-sm text-slate-500">Giỏ hàng đang trống. Hãy chọn món bạn thích nhé.</p>';
+ document.getElementById("checkoutBtn").disabled=!entries.length;
+ document.getElementById("checkoutBtn").classList.toggle("opacity-50",!entries.length);
+}
+document.getElementById("dishGrid").addEventListener("click",event=>{
+ const button=event.target.closest("button[data-add-cart]");
+ if(!button)return;
+ const dish=dishes.find(item=>item.id===Number(button.dataset.addCart));
+ if(!dish)return;
+ if(cart[dish.id])cart[dish.id].quantity+=1;
+ else cart[dish.id]={...dish,quantity:1};
+ renderCart();
+ button.textContent="✓ Đã thêm";
+ setTimeout(()=>{button.textContent="＋ Thêm vào giỏ";},900);
+});
+document.getElementById("cartItems").addEventListener("click",event=>{
+ const button=event.target.closest("button[data-cart-action]");
+ if(!button)return;
+ const id=Number(button.dataset.id),item=cart[id];
+ if(!item)return;
+ if(button.dataset.cartAction==="plus")item.quantity+=1;
+ if(button.dataset.cartAction==="minus")item.quantity-=1;
+ if(button.dataset.cartAction==="remove"||item.quantity<=0)delete cart[id];
+ renderCart();
+});
+document.getElementById("checkoutForm").addEventListener("submit",event=>{
+ event.preventDefault();
+ if(!Object.keys(cart).length)return;
+ const orderCode="BTM-"+String(Date.now()).slice(-6);
+ const total=Object.values(cart).reduce((sum,item)=>sum+item.price*item.quantity,0);
+ const name=document.getElementById("customerName").value.trim();
+ document.getElementById("orderMessage").textContent="Đã tạo đơn thử nghiệm "+orderCode+" cho "+name+". Tổng tạm tính: "+money(total)+". Đây chưa phải đơn hàng được gửi đến nhà hàng.";
+ document.getElementById("orderMessage").classList.remove("hidden");
+ Object.keys(cart).forEach(key=>delete cart[key]);
+ renderCart();
+ document.getElementById("checkoutForm").reset();
+ document.getElementById("cartSection").scrollIntoView({behavior:"smooth",block:"center"});
+});
+renderCart();
+
 document.getElementById("searchInput").addEventListener("input",event=>{state.search=event.target.value.trim();renderDishes();});
 document.getElementById("budgetRange").addEventListener("input",event=>{state.budget=Number(event.target.value);document.getElementById("budgetValue").textContent=money(state.budget);renderDishes();});
 document.getElementById("vegetarianOnly").addEventListener("change",event=>{state.vegetarian=event.target.checked;renderDishes();});
