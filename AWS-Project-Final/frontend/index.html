@@ -148,10 +148,41 @@
       </div>
       <div class="p-5">
         <img id="modal-image" class="w-full h-48 object-cover rounded-xl bg-orange-50 mb-5" alt="">
-        <h3 class="font-bold text-slate-800 mb-2">Nguyên liệu</h3>
-        <div id="modal-ingredients" class="mb-5"></div>
-        <h3 class="font-bold text-slate-800 mb-2">Cách làm từng bước</h3>
-        <ol id="modal-instructions" class="list-decimal list-inside space-y-2 text-sm leading-relaxed text-slate-700"></ol>
+        <p id="modal-description" class="text-sm leading-relaxed text-slate-600 mb-5"></p>
+        <div id="modal-overview" class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-6"></div>
+        <section class="mb-6">
+          <h3 class="font-bold text-slate-800 mb-2">🧺 Nguyên liệu và định lượng</h3>
+          <div id="modal-ingredients" class="space-y-2"></div>
+        </section>
+        <section class="mb-6">
+          <h3 class="font-bold text-slate-800 mb-2">🔪 Chuẩn bị trước khi nấu</h3>
+          <ul id="modal-preparation" class="list-disc list-inside space-y-2 text-sm leading-relaxed text-slate-700"></ul>
+        </section>
+        <section class="mb-6">
+          <h3 class="font-bold text-slate-800 mb-2">👨‍🍳 Các bước chế biến</h3>
+          <div id="modal-cooking-steps" class="space-y-4"></div>
+          <ol id="modal-instructions" class="list-decimal list-inside space-y-2 text-sm leading-relaxed text-slate-700"></ol>
+        </section>
+        <section class="mb-6">
+          <h3 class="font-bold text-slate-800 mb-2">💡 Bí quyết đầu bếp</h3>
+          <ul id="modal-tips" class="list-disc list-inside space-y-1 text-sm text-slate-700"></ul>
+        </section>
+        <section class="mb-6">
+          <h3 class="font-bold text-slate-800 mb-2">⚠️ Lỗi thường gặp</h3>
+          <div id="modal-mistakes" class="space-y-2"></div>
+        </section>
+        <section class="mb-6">
+          <h3 class="font-bold text-slate-800 mb-2">🔄 Nguyên liệu thay thế</h3>
+          <div id="modal-substitutions" class="text-sm text-slate-700 space-y-1"></div>
+        </section>
+        <section class="mb-6">
+          <h3 class="font-bold text-slate-800 mb-2">📊 Dinh dưỡng ước tính / khẩu phần</h3>
+          <div id="modal-nutrition" class="grid grid-cols-2 sm:grid-cols-4 gap-2"></div>
+        </section>
+        <section class="grid sm:grid-cols-2 gap-4 mb-5">
+          <div><h3 class="font-bold text-slate-800 mb-1">❄️ Bảo quản</h3><p id="modal-storage" class="text-sm text-slate-600"></p></div>
+          <div><h3 class="font-bold text-slate-800 mb-1">♨️ Hâm nóng</h3><p id="modal-reheating" class="text-sm text-slate-600"></p></div>
+        </section>
         <p id="modal-notes" class="text-xs text-slate-500 mt-5"></p>
       </div>
     </div>
@@ -311,18 +342,89 @@
         grid.appendChild(card);
       });
     }
+    function renderInfoPills(container, items) {
+      container.replaceChildren();
+      items.forEach(function(item) {
+        const pill = document.createElement("div");
+        pill.className = "rounded-xl bg-orange-50 border border-orange-100 p-3 text-center";
+        addText(pill, "p", item.value, "font-extrabold text-slate-800");
+        addText(pill, "p", item.label, "text-xs text-slate-500 mt-1");
+        container.appendChild(pill);
+      });
+    }
     function openRecipe(recipe) {
       $("modal-title").textContent = recipe.Name || "Món ăn";
-      $("modal-meta").textContent = (recipe.CookingTimeMinutes || "—") + " phút · Chi phí ước tính " + Number(recipe.EstimatedCostVND || 0).toLocaleString("vi-VN") + "đ/khẩu phần";
+      $("modal-meta").textContent = [recipe.Cuisine, recipe.Category, recipe.Difficulty === "easy" ? "Dễ" : recipe.Difficulty === "medium" ? "Trung bình" : recipe.Difficulty].filter(Boolean).join(" · ") + " · Chi phí ước tính " + Number(recipe.EstimatedCostVND || 0).toLocaleString("vi-VN") + "đ/khẩu phần";
       $("modal-image").src = recipe.ImageURL || "";
       $("modal-image").alt = recipe.Name || "Món ăn";
+      $("modal-description").textContent = recipe.Description || "Công thức món ăn gia đình.";
+      renderInfoPills($("modal-overview"), [
+        {label:"Chuẩn bị",value:(recipe.PrepTimeMinutes ?? "—") + " phút"},
+        {label:"Chế biến",value:(recipe.CookingTimeMinutes ?? "—") + " phút"},
+        {label:"Tổng thời gian",value:(recipe.TotalTimeMinutes ?? recipe.CookingTimeMinutes ?? "—") + " phút"},
+        {label:"Khẩu phần",value:(recipe.Servings ?? "—") + " người"}
+      ]);
       $("modal-ingredients").replaceChildren();
-      addTagList($("modal-ingredients"), arrayOf(recipe.Ingredients));
+      if (Array.isArray(recipe.IngredientDetails) && recipe.IngredientDetails.length) {
+        recipe.IngredientDetails.forEach(function(item) {
+          const row = document.createElement("div");
+          row.className = "flex flex-col sm:flex-row sm:items-start sm:justify-between gap-1 rounded-lg bg-slate-50 px-3 py-2";
+          const left = document.createElement("div");
+          addText(left,"p",item.Name || "Nguyên liệu","font-semibold text-sm text-slate-800");
+          if (item.Preparation) addText(left,"p",item.Preparation,"text-xs text-slate-500 mt-1");
+          row.appendChild(left);
+          addText(row,"span",[item.Quantity,item.Unit].filter(Boolean).join(" "),"text-sm font-bold text-orange-700 whitespace-nowrap");
+          $("modal-ingredients").appendChild(row);
+        });
+      } else addTagList($("modal-ingredients"),arrayOf(recipe.Ingredients));
+      $("modal-preparation").replaceChildren();
+      arrayOf(recipe.Preparation).forEach(function(item){addText($("modal-preparation"),"li",item);});
+      $("modal-cooking-steps").replaceChildren();
       $("modal-instructions").replaceChildren();
-      arrayOf(recipe.Instructions).forEach(function(step) { addText($("modal-instructions"), "li", step); });
-      $("modal-notes").textContent = recipe.Notes || "Thông tin dinh dưỡng chỉ mang tính tham khảo.";
+      if (Array.isArray(recipe.CookingSteps) && recipe.CookingSteps.length) {
+        recipe.CookingSteps.forEach(function(step) {
+          const card = document.createElement("article");
+          card.className = "rounded-xl border border-slate-200 p-4";
+          addText(card,"p","BƯỚC " + step.Step + " · " + (step.Title || ""),"font-bold text-orange-700 text-sm");
+          addText(card,"p",step.Description || "","text-sm text-slate-700 leading-relaxed mt-2");
+          const details = [step.DurationMinutes != null ? step.DurationMinutes + " phút" : "",step.HeatLevel || "",step.Technique || ""].filter(Boolean).join(" · ");
+          if(details) addText(card,"p",details,"text-xs text-slate-500 mt-2");
+          if(step.CompletionCue) addText(card,"p","Dấu hiệu hoàn thành: " + step.CompletionCue,"text-xs text-emerald-700 mt-2");
+          $("modal-cooking-steps").appendChild(card);
+        });
+      } else {
+        arrayOf(recipe.Instructions).forEach(function(step){addText($("modal-instructions"),"li",step);});
+      }
+      $("modal-tips").replaceChildren();
+      arrayOf(recipe.ChefTips).forEach(function(item){addText($("modal-tips"),"li",item);});
+      $("modal-mistakes").replaceChildren();
+      arrayOf(recipe.CommonMistakes).forEach(function(item) {
+        const card=document.createElement("div"); card.className="rounded-lg bg-amber-50 border border-amber-100 p-3";
+        addText(card,"p",item.Mistake || "Lưu ý","font-semibold text-sm text-amber-900");
+        if(item.Cause) addText(card,"p","Nguyên nhân: "+item.Cause,"text-xs text-amber-800 mt-1");
+        if(item.Fix) addText(card,"p","Khắc phục: "+item.Fix,"text-xs text-amber-800 mt-1");
+        $("modal-mistakes").appendChild(card);
+      });
+      $("modal-substitutions").replaceChildren();
+      arrayOf(recipe.Substitutions).forEach(function(item) {
+        addText($("modal-substitutions"),"p",(item.Ingredient || "Nguyên liệu") + ": " + arrayOf(item.Alternatives).join(", "));
+      });
+      const n=recipe.Nutrition || {};
+      renderInfoPills($("modal-nutrition"),[
+        {label:"Năng lượng",value:(n.CaloriesKcal ?? "—")+" kcal"},
+        {label:"Protein",value:(n.ProteinG ?? "—")+" g"},
+        {label:"Carbohydrate",value:(n.CarbsG ?? "—")+" g"},
+        {label:"Chất béo",value:(n.FatG ?? "—")+" g"},
+        {label:"Chất béo bão hòa",value:(n.SaturatedFatG ?? "—")+" g"},
+        {label:"Chất xơ",value:(n.FiberG ?? "—")+" g"},
+        {label:"Đường",value:(n.SugarG ?? "—")+" g"},
+        {label:"Natri",value:(n.SodiumMg ?? "—")+" mg"}
+      ]);
+      $("modal-storage").textContent=recipe.Storage || "Chưa có hướng dẫn bảo quản.";
+      $("modal-reheating").textContent=recipe.Reheating || "Chưa có hướng dẫn hâm nóng.";
+      $("modal-notes").textContent=(recipe.Notes || "Thông tin dinh dưỡng chỉ mang tính tham khảo.") + (n.IsEstimate ? " Dữ liệu dinh dưỡng là ước tính." : "");
       $("recipe-modal").classList.add("active");
-      document.body.style.overflow = "hidden";
+      document.body.style.overflow="hidden";
       $("modal-close").focus();
     }
     function closeModal() {
