@@ -242,6 +242,36 @@ def create_order(event):
     })
 
 
+
+def get_order_status(event):
+    path_params = event.get("pathParameters") or {}
+    order_id = str(path_params.get("orderId") or "").strip().upper()
+    if not re.fullmatch(r"BTM-[A-F0-9]{10}", order_id):
+        return response(400, {"error": "Mã đơn hàng không đúng định dạng."})
+
+    result = orders_table.get_item(
+        Key={"OrderID": order_id},
+        ConsistentRead=True
+    )
+    order = result.get("Item")
+    if not order:
+        return response(404, {"error": "Không tìm thấy đơn hàng. Vui lòng kiểm tra lại mã đơn."})
+
+    # Only return tracking information; never expose customer phone/address.
+    public_order = {
+        "OrderID": order.get("OrderID"),
+        "CreatedAt": order.get("CreatedAt"),
+        "Status": order.get("Status"),
+        "Items": order.get("Items", []),
+        "TotalAmount": order.get("TotalAmount", 0),
+        "PaymentMethod": order.get("PaymentMethod", "COD"),
+    }
+    return response(200, {
+        "message": "Tra cứu đơn hàng thành công.",
+        "order": public_order,
+        "source": "dynamodb",
+    })
+
 def lambda_handler(event, context):
     method = (
         event.get("httpMethod")
@@ -261,6 +291,15 @@ def lambda_handler(event, context):
         except Exception:
             logger.exception("Unhandled order creation error")
             return response(500, {"error": "Lỗi khi tạo đơn hàng. Xem CloudWatch Logs để biết chi tiết."})
+    if method == "GET" and (event.get("pathParameters") or {}).get("orderId"):
+        try:
+            return get_order_status(event)
+        except ClientError:
+            logger.exception("Could not retrieve order from DynamoDB")
+            return response(500, {"error": "Không tra cứu được đơn hàng. Kiểm tra quyền IAM và bảng FoodOrdersTable."})
+        except Exception:
+            logger.exception("Unhandled order lookup error")
+            return response(500, {"error": "Lỗi khi tra cứu đơn hàng. Xem CloudWatch Logs để biết chi tiết."})
     if method != "GET":
         return response(405, {"error": "Chỉ hỗ trợ GET để tìm công thức và POST để tạo đơn hàng."})
 
